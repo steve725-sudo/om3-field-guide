@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1E6D74">
+<title>OM-3 Field Guide</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E8EAE8;--panel:#F7F8F7;--panel2:#DEE1DF;--ink:#191C1B;--ink2:#58605D;--line:#C8CDCA;
+  --dial:#1E6D74;--dial-ink:#FFFFFF;--amber:#B8731B;--amber-bg:#F4E6CF;--teal-bg:#D6E8E9;--red:#C8382B;
+  --nav-h:60px;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141718;--panel:#1E2325;--panel2:#2A3032;--ink:#E6E8E6;--ink2:#9EA6A3;--line:#363D3F;
+  --dial:#4FB3BB;--dial-ink:#0F1F21;--amber:#E0A04A;--amber-bg:#3A2D18;--teal-bg:#173538;}}
+:root[data-theme="dark"]{
+  --bg:#141718;--panel:#1E2325;--panel2:#2A3032;--ink:#E6E8E6;--ink2:#9EA6A3;--line:#363D3F;
+  --dial:#4FB3BB;--dial-ink:#0F1F21;--amber:#E0A04A;--amber-bg:#3A2D18;--teal-bg:#173538;}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px);height:100%}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;height:100%}
+a{color:var(--dial)}
+p{margin:0 0 10px}.muted{color:var(--ink2)}
+h1{font-size:22px;font-weight:600;margin:0;letter-spacing:-.01em}
+h2{font-size:22px;font-weight:600;margin:0 0 10px;letter-spacing:-.01em}
+h3{font-size:16px;font-weight:600;margin:18px 0 6px}
+:focus-visible{outline:2px solid var(--dial);outline-offset:2px}
+/* ---- layout: phone = sticky top + bottom tab bar; tablet = sidebar ---- */
+.app{min-height:100%;display:grid;grid-template-rows:auto 1fr;}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:20;border-bottom:1px solid var(--line)}
+header.top .in{max-width:760px;margin:0 auto;padding:10px 16px 0;display:flex;flex-direction:column;gap:8px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .mark{width:30px;height:30px;border-radius:50%;background:conic-gradient(var(--dial) 0 72deg,var(--amber) 72deg 144deg,var(--panel2) 144deg 360deg);position:relative;flex:0 0 auto}
+.brand .mark::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--bg)}
+.brand small{color:var(--ink2);font-weight:400;font-size:13px;margin-left:6px}
+.brand .sp{flex:1}
+.tbtn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:inherit}
+main{max-width:760px;margin:0 auto;padding:16px 16px calc(var(--nav-h) + 24px + env(safe-area-inset-bottom,0px));width:100%}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;z-index:20;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:1 0 64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:var(--ink2);font-size:10.5px;font-weight:500;padding:6px 2px}
+nav.tabs a svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs a.on{color:var(--dial)}
+section{display:none}section.on{display:block;animation:in .18s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (min-width:860px){
+  .app{grid-template-columns:230px 1fr;grid-template-rows:1fr}
+  header.top{position:static;border-bottom:0;background:transparent;backdrop-filter:none}
+  header.top .in{padding:22px 18px}
+  nav.tabs{position:sticky;top:0;bottom:auto;height:auto;flex-direction:column;border-top:0;border-right:1px solid var(--line);background:transparent;backdrop-filter:none;padding:12px 10px;gap:2px;align-self:start;min-height:100vh;grid-column:1;grid-row:1}
+  nav.tabs a{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;font-size:14.5px;padding:10px 12px;border-radius:10px}
+  nav.tabs a.on{background:var(--panel);color:var(--ink)}
+  nav.tabs a.on svg{color:var(--dial)}
+  .side{grid-column:1;grid-row:1;display:flex;flex-direction:column}
+  .content{grid-column:2;grid-row:1;min-width:0}
+  main{max-width:860px;padding:28px 36px 60px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+}
+/* dial chips */
+.dial{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px}
+.dial::-webkit-scrollbar{display:none}
+.dial button{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:7px 12px 7px 9px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px}
+.dial button .c{font-size:11px;font-weight:700;background:var(--panel2);border-radius:999px;padding:1px 6px;color:var(--ink2)}
+.dial button .ic{stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dial button.on{background:var(--dial);color:var(--dial-ink);border-color:var(--dial)}
+.dial button.on .c{background:rgba(255,255,255,.25);color:var(--dial-ink)}
+@media (min-width:860px){.dial{flex-direction:column;padding:0 0 16px}.dial button{justify-content:flex-start}}
+/* generic */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:10px 0}
+.card.amber{background:var(--amber-bg);border-color:transparent}
+.card.teal{background:var(--teal-bg);border-color:transparent}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:4px 12px;font-size:14.5px}.kv dt{color:var(--ink2);margin:0}.kv dd{margin:0}
+.ic{width:18px;height:18px;flex:0 0 auto}
+.pill{display:inline-block;background:var(--panel2);border-radius:999px;padding:2px 9px;font-size:13px;margin:2px 4px 2px 0}
+.tag{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--panel2);color:var(--ink2);margin:2px 4px 0 0}
+.tag.base{background:var(--teal-bg);color:var(--ink)}
+.count{font-size:13px;color:var(--ink2);margin:6px 0}
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:3px;margin:8px 0;width:max-content;max-width:100%}
+.seg button{font:inherit;font-size:13px;padding:5px 12px;border:0;background:transparent;color:var(--ink2);border-radius:999px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg)}
+input[type=search],select,input[type=text]{width:100%;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)}
+.chips{display:flex;gap:6px;overflow-x:auto;margin-top:8px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chips button{flex:0 0 auto;font:inherit;font-size:13px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.chips button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.toggle{display:flex;align-items:center;gap:8px;font-size:14px;margin-top:8px;color:var(--ink2)}.toggle input{width:18px;height:18px;accent-color:var(--dial)}
+details{border:1px solid var(--line);border-radius:12px;background:var(--panel);margin:8px 0}
+details summary{cursor:pointer;padding:12px 14px;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:"+";color:var(--ink2);font-weight:400;font-size:18px}details[open] summary::after{content:"–"}
+details .body{padding:0 14px 12px;font-size:14.5px}details ol,details ul{padding-left:20px;margin:6px 0}details li{margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}th{color:var(--ink2);font-weight:500}.scroll{overflow-x:auto}
+.btn{font:inherit;font-size:14px;font-weight:500;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--dial);color:var(--dial-ink);border-color:var(--dial)}
+.btn.small{font-size:12.5px;padding:5px 10px}
+/* hero / overview */
+.hero{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:8px}
+.hero h2{font-size:30px;line-height:1.1;margin:0}
+.hero p.lead{font-size:16.5px;color:var(--ink2);max-width:52ch}
+.sysmap{width:100%;height:auto;display:block}
+.sysmap text{font-family:inherit}
+.path{display:grid;grid-template-columns:1fr;gap:8px}
+.step{display:grid;grid-template-columns:34px 1fr;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.step .n{width:30px;height:30px;border-radius:50%;background:var(--dial);color:var(--dial-ink);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+.step b{display:block;font-size:15px}.step span{font-size:14px;color:var(--ink2)}
+/* decision tree */
+.tree .q{font-size:17px;font-weight:600;margin:14px 0 8px}
+.tree .opts{display:grid;gap:8px;grid-template-columns:1fr}
+.tree .opt{text-align:left;font:inherit;font-size:14.5px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.tree .opt:hover{border-color:var(--dial)}
+.tree .ans{background:var(--teal-bg);border-radius:14px;padding:14px 16px;margin-top:8px;font-size:14.5px}
+.tree .ans b{display:block;font-size:16px;margin-bottom:4px}
+.crumb{font-size:13px;color:var(--ink2)}
+/* glossary */
+.gl{display:grid;grid-template-columns:1fr;gap:6px}
+.gl div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px}
+.gl b{display:block;font-size:14.5px}
+@media (min-width:860px){.gl{grid-template-columns:1fr 1fr}}
+/* camera svg + buttons */
+.cam,.dialmap{width:100%;height:auto;display:block}.cam text,.dialmap text{font-family:inherit}
+.btnlist{list-style:none;padding:0;margin:8px 0 0;font-size:14.5px}
+.btnlist li{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:7px 0;border-top:1px solid var(--line)}.btnlist li:first-child{border-top:0}
+.btnlist b{font-weight:600}.btnlist .why{display:block;color:var(--ink2);font-size:13px}
+/* settings */
+.toolbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 58px);background:var(--bg);padding:8px 0;z-index:5}
+@media (min-width:860px){.toolbar{top:0}}
+.sec{font-size:13px;font-weight:600;color:var(--ink2);margin:18px 0 4px}
+.row{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;font-size:14.5px}
+.row .name{font-weight:600}.row .name span{font-weight:400;color:var(--ink2)}
+.vals{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;font-size:13.5px}.vals div{color:var(--ink2)}.vals div b{display:block;color:var(--ink);font-weight:500}.vals div.g b{color:var(--amber);font-weight:600}
+.row .note{margin-top:6px;font-size:13.5px;color:var(--ink2);border-left:3px solid var(--amber);padding-left:8px}
+/* ND */
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:10px}.calc label{font-size:13px;color:var(--ink2);display:block}select{margin-top:4px}
+.result{margin-top:12px;font-size:15px}.result .big{font-size:34px;font-weight:600;line-height:1.1;color:var(--dial)}.result .big small{font-size:15px;font-weight:500;color:var(--ink2);margin-left:6px}
+/* recipes */
+.rgrid{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:860px){.rgrid{grid-template-columns:1fr 1fr}.recipe.open{grid-column:1/-1}}
+.recipe{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer}
+.recipe .top{display:grid;grid-template-columns:88px 1fr;gap:12px}
+.recipe .wheel{width:88px;height:88px}.recipe h3{margin:0;font-size:16px}.recipe .by{font-size:12.5px;color:var(--ink2)}.recipe .mood{font-size:13.5px;margin-top:4px}.recipe .tags{margin-top:6px}
+.rdetail{display:none;margin-top:10px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}.recipe.open .rdetail{display:block}
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 10px;font-size:13px;font-variant-numeric:tabular-nums;margin:6px 0}
+@media (min-width:500px){.cgrid{grid-template-columns:repeat(4,1fr)}}
+.cgrid div{display:flex;align-items:center;gap:6px}.cgrid i{width:10px;height:10px;border-radius:3px;display:inline-block}.cgrid b{margin-left:auto;font-weight:600}
+.curve{height:60px;width:100%;max-width:220px;display:block}
+.steps{counter-reset:s;padding-left:0;list-style:none;font-size:14px}.steps li{counter-increment:s;padding:4px 0 4px 30px;position:relative}
+.steps li::before{content:counter(s);position:absolute;left:0;top:4px;width:22px;height:22px;border-radius:50%;background:var(--dial);color:var(--dial-ink);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center}
+ .cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmp img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:10px;display:block;background:var(--panel2)}
+.cmp .lab{font-size:12.5px;color:var(--ink2);margin-top:6px;padding:9px 0}
+.cmp select{margin-top:6px;font-size:13px;padding:7px 10px}
+.recipe .thumb{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:10px;display:block;margin-top:8px;background:var(--panel2)}
+.partial{font-size:12.5px;color:var(--amber)}
+/* planner */
+.slot{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0}
+.slot .head{display:flex;align-items:center;gap:10px}
+.slot .cnum{width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto}
+.slot select{margin:0;flex:1}
+.slotgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.slotgrid h4{margin:0 0 4px;font-size:12.5px;color:var(--ink2);font-weight:500}
+.mini{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:6px 8px;margin:4px 0;font-size:13px;min-height:36px}
+.mini .wheel{width:26px;height:26px;flex:0 0 auto}
+.mini .x{margin-left:auto;border:0;background:transparent;color:var(--ink2);cursor:pointer;font-size:16px;padding:0 4px}
+.mini.add{color:var(--ink2);cursor:pointer;justify-content:center}
+.picker{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.picker.on{display:flex}
+.picker .sheet{background:var(--bg);width:100%;max-width:640px;max-height:80vh;overflow:auto;border-radius:18px 18px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+@media (min-width:860px){.picker{align-items:center}.picker .sheet{border-radius:18px}}
+.picker .row{display:flex;align-items:center;gap:10px;cursor:pointer}.picker .row .wheel{width:40px;height:40px}
+pre.plan{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.foot{font-size:12.5px;color:var(--ink2);margin-top:30px;border-top:1px solid var(--line);padding-top:10px}
+@media (max-width:420px){.btnlist li{grid-template-columns:84px 1fr}.kv{grid-template-columns:104px 1fr}}
+@media (prefers-reduced-motion:reduce){section.on{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="side">
+<header class="top"><div class="in">
+<div class="brand"><div class="mark"></div><h1>OM-3<small>Field Guide</small></h1><div class="sp"></div><button class="tbtn" id="theme" aria-label="Toggle dark mode">◐</button></div>
+<div class="dial" id="dial"></div>
+</div></header>
+<nav class="tabs" id="tabs">
+<a href="#overview" class="on" data-s="overview"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>Overview</a>
+<a href="#buttons" data-s="buttons"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><circle cx="12" cy="12.5" r="3"/><path d="M8 3h8"/></svg>Buttons</a>
+<a href="#workflow" data-s="workflow"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/><path d="M17 15l2 2 3-4"/></svg>Shoot</a>
+<a href="#sims" data-s="sims"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18"/><path d="M3 12h18"/></svg>Looks</a>
+<a href="#planner" data-s="planner"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><path d="M16.5 13v7M13 16.5h7"/></svg>Slots</a>
+<a href="#settings" data-s="settings"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="17" r="2"/></svg>Settings</a>
+<a href="#nd" data-s="nd"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" opacity=".5"/></svg>ND</a>
+<a href="#learn" data-s="learn"><svg viewBox="0 0 24 24"><path d="M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4z"/><path d="M20 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>Learn</a>
+</nav>
+</div>
+<div class="content"><main>
+<section id="overview" class="on">
+<div class="hero">
+<h2>One camera, five personalities,<br>twenty-four looks.</h2>
+<p class="lead">The OM-3 stores a complete camera inside each custom slot — exposure, focus, buttons, display, and its own set of colour and mono recipes. Learn the structure once and the 400 menu items stop mattering.</p>
+</div>
+<div class="card" style="padding:10px">
+<svg class="sysmap" viewBox="0 0 360 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="System map: mode dial selects a slot; each slot holds settings plus colour and mono recipes; creative dial picks the look">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5 0 10z" fill="var(--ink2)"/></marker></defs>
+<!-- mode dial -->
+<circle cx="52" cy="60" r="38" fill="var(--panel2)"/><circle cx="52" cy="60" r="26" fill="var(--panel)" stroke="var(--line)"/>
+<text x="52" y="57" text-anchor="middle" font-size="9" fill="var(--ink2)">mode</text><text x="52" y="68" text-anchor="middle" font-size="9" fill="var(--ink2)">dial</text>
+<g id="mapSlots" font-size="8.5" font-weight="600" fill="var(--ink)" text-anchor="middle">
+<text x="52" y="30">C1</text><text x="77" y="42">C2</text><text x="84" y="64">C3</text><text x="74" y="86">C4</text><text x="52" y="94">C5</text></g>
+<text x="20" y="42" font-size="8" fill="var(--ink2)">M</text><text x="16" y="66" font-size="8" fill="var(--ink2)">B</text>
+<!-- arrow -->
+<path d="M95 60 H128" stroke="var(--ink2)" stroke-width="1.2" marker-end="url(#ar)"/>
+<!-- slot box -->
+<rect x="132" y="12" width="150" height="130" rx="12" fill="var(--panel)" stroke="var(--line)"/>
+<text id="mapSlotName" x="207" y="30" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)">C1 · Landscape</text>
+<g font-size="8.5" fill="var(--ink2)">
+<text x="144" y="50">exposure · M, ISO, lever</text>
+<text x="144" y="63">autofocus · targets, limiter</text>
+<text x="144" y="76">buttons · Fn, Rec, AF-ON</text>
+<text x="144" y="89">drive · display · histogram</text></g>
+<rect x="142" y="98" width="62" height="34" rx="7" fill="var(--teal-bg)"/><text x="173" y="112" text-anchor="middle" font-size="8.5" font-weight="600" fill="var(--ink)">4 colour</text><text x="173" y="124" text-anchor="middle" font-size="8" fill="var(--ink2)">recipes</text>
+<rect x="210" y="98" width="62" height="34" rx="7" fill="var(--panel2)"/><text x="241" y="112" text-anchor="middle" font-size="8.5" font-weight="600" fill="var(--ink)">4 mono</text><text x="241" y="124" text-anchor="middle" font-size="8" fill="var(--ink2)">recipes</text>
+<!-- creative dial -->
+<path d="M286 115 H318" stroke="var(--ink2)" stroke-width="1.2" marker-end="url(#ar)"/>
+<circle cx="330" cy="115" r="22" fill="var(--panel2)"/><circle cx="330" cy="115" r="14" fill="var(--panel)" stroke="var(--line)"/>
+<text x="330" y="118" text-anchor="middle" font-size="7" fill="var(--ink2)">creative</text>
+<text x="330" y="150" text-anchor="middle" font-size="8" fill="var(--ink2)">COLOR / MONO</text>
+<!-- bottom row: outputs -->
+<path d="M207 142 V165" stroke="var(--ink2)" stroke-width="1.2" marker-end="url(#ar)"/>
+<rect x="60" y="170" width="294" height="48" rx="12" fill="var(--amber-bg)"/>
+<text x="207" y="190" text-anchor="middle" font-size="10" font-weight="600" fill="var(--ink)">RAW always · JPEG carries the look</text>
+<text x="207" y="206" text-anchor="middle" font-size="8.5" fill="var(--ink2)">5 slots × (4 colour + 4 mono) + 4 + 4 on the dial = 24 of each</text>
+</svg>
+</div>
+<div class="card teal" id="genreIntro"></div>
+<h3>How it fits together</h3>
+
+<details open><summary>1. The mode dial: C1 to C5</summary><div class="body">
+<p>C1 Landscape/LE, C2 Birds in flight, C3 Street, C4 Macro, C5 Astro. Each slot stores roughly 400 settings. While you are still tuning a slot, set <b>Save Settings = Hold</b> so tweaks stick; once happy, set it to <b>Reset</b> so accidental changes are thrown away when you leave the mode.</p>
+<p>Trap: <b>B (Bulb/Live Time) inherits settings from M, not from C1.</b> Before a long-exposure session, recall C1 into main memory (Reset/Custom Modes → Recall), then work between M and B so ISO and aperture don't jump.</p>
+</div></details>
+<details><summary>2. The Fn lever: what the dials do</summary><div class="body">
+<p><b>Position 1</b> — front dial shutter speed, rear dial exposure compensation. Used for BIF and Street with Auto ISO, so you can rescue a blown or dark bird in one twist.</p>
+<p><b>Position 2</b> — front dial shutter speed, rear dial aperture. Used for everything else, and to pre-set aperture before flicking back to position 1.</p>
+<p>Landscape, Macro and Astro default to ISO 200; BIF and Street default to Auto ISO (ceiling 6400, 12800 for BIF).</p>
+</div></details>
+<details><summary>3. The CP button</summary><div class="body">
+<p>One button replaces four on the OM-1. Press CP and turn the front dial to cycle High-Res, Live ND, HDR, Focus stacking and Live GND. Bracketing (BKT) is <i>not</i> on CP, so it goes on the Rec button where needed.</p>
+</div></details>
+<details><summary>4. Back-button focus and the half-press</summary><div class="body">
+<p>AF-ON does the focusing. In Landscape and Macro the shutter half-press is set <b>not</b> to refocus (AF by half-pressing = No), so once you've manually focused, pressing the shutter won't undo it. In BIF and Street the half-press focuses normally, because the front button may be busy with Pro Capture.</p>
+</div></details>
+<details><summary>5. The noise-reduction trick for long exposures</summary><div class="body">
+<p>NR can't be put on a button. So: Silent-shutter settings → NR <b>Off</b>; main Noise Reduction → <b>Auto</b>. Custom modes shoot silent (no NR, fast test shots); Bulb/Live Time always uses mechanical shutter (NR on, clean final frame). Test fast, shoot clean.</p>
+</div></details>
+
+<h3>Cards</h3>
+<p class="muted">Slot 1: fast 64 GB, used for BIF and Street (high frame rates, offloaded and formatted each day). Slot 2: 256 GB, used for Landscape and Macro (low volume, rarely formatted).</p>
+
+</section><section id="buttons">
+<h2>Buttons · <span id="bGenre"></span></h2>
+<p class="muted">Rear view. Labels change with the genre selected above.</p>
+<div class="card" style="padding:8px">
+<svg class="cam" viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" aria-labelledby="camTitle"><title id="camTitle">OM-3 rear button layout</title>
+<rect x="8" y="8" width="344" height="234" rx="14" fill="var(--panel2)"/>
+<rect x="24" y="34" width="176" height="128" rx="6" fill="var(--bg)" stroke="var(--line)"/>
+<text x="112" y="104" text-anchor="middle" font-size="11" fill="var(--ink2)">monitor</text>
+<rect x="90" y="12" width="48" height="18" rx="4" fill="var(--bg)" stroke="var(--line)"/><text x="114" y="25" text-anchor="middle" font-size="9" fill="var(--ink2)">EVF</text>
+<!-- top row: Fn, Rec, AF-ON -->
+<g id="b_fn"><circle cx="232" cy="46" r="13" fill="var(--panel)" stroke="var(--line)"/><text x="232" y="50" text-anchor="middle" font-size="9" font-weight="600" fill="var(--ink)">Fn</text><text x="232" y="72" text-anchor="middle" font-size="9" fill="var(--amber)" class="lab"></text></g>
+<g id="b_rec"><circle cx="276" cy="46" r="13" fill="var(--panel)" stroke="var(--line)"/><circle cx="276" cy="46" r="4" fill="#C8382B"/><text x="276" y="72" text-anchor="middle" font-size="9" fill="var(--amber)" class="lab"></text></g>
+<g id="b_afon"><circle cx="322" cy="46" r="15" fill="var(--panel)" stroke="var(--line)"/><text x="322" y="49" text-anchor="middle" font-size="8" font-weight="600" fill="var(--ink)">AF-ON</text><text x="322" y="72" text-anchor="middle" font-size="9" fill="var(--amber)" class="lab"></text></g>
+<!-- d-pad -->
+<g id="dpad">
+<circle cx="280" cy="150" r="38" fill="var(--panel)" stroke="var(--line)"/>
+<circle cx="280" cy="150" r="12" fill="var(--bg)" stroke="var(--line)"/><text x="280" y="153" text-anchor="middle" font-size="7" fill="var(--ink2)">OK</text>
+<text x="280" y="124" text-anchor="middle" font-size="9" fill="var(--ink2)">▲</text>
+<text x="280" y="182" text-anchor="middle" font-size="9" fill="var(--ink2)">▼</text>
+<text x="252" y="153" text-anchor="middle" font-size="9" fill="var(--ink2)">◀</text>
+<text x="308" y="153" text-anchor="middle" font-size="9" fill="var(--ink2)">▶</text>
+<text id="b_left" x="236" y="200" text-anchor="middle" font-size="9" fill="var(--amber)" class="lab"></text>
+<text id="b_right" x="324" y="200" text-anchor="middle" font-size="9" fill="var(--amber)" class="lab"></text>
+<text id="b_down" x="280" y="214" text-anchor="middle" font-size="9" fill="var(--amber)" class="lab"></text>
+<text id="b_ok" x="280" y="228" text-anchor="middle" font-size="8" fill="var(--ink2)" class="lab"></text>
+</g>
+<!-- CP + LV + menu -->
+<g id="b_cp"><rect x="214" y="92" width="36" height="18" rx="4" fill="var(--panel)" stroke="var(--line)"/><text x="232" y="105" text-anchor="middle" font-size="9" font-weight="600" fill="var(--ink)">CP</text></g>
+<g id="b_lv"><circle cx="40" cy="186" r="11" fill="var(--panel)" stroke="var(--line)"/><text x="40" y="189" text-anchor="middle" font-size="7" fill="var(--ink)">|O|</text><text x="40" y="210" text-anchor="middle" font-size="9" fill="var(--amber)" class="lab"></text></g>
+<g><rect x="70" y="176" width="44" height="18" rx="4" fill="var(--panel)" stroke="var(--line)"/><text x="92" y="189" text-anchor="middle" font-size="8" fill="var(--ink)">MENU</text></g>
+<g><rect x="126" y="176" width="40" height="18" rx="4" fill="var(--panel)" stroke="var(--line)"/><text x="146" y="189" text-anchor="middle" font-size="8" fill="var(--ink)">INFO</text></g>
+<g><rect x="178" y="176" width="24" height="18" rx="4" fill="var(--panel)" stroke="var(--line)"/><text x="190" y="189" text-anchor="middle" font-size="8" fill="var(--ink)">▶</text></g>
+</svg>
+</div>
+<ul class="btnlist" id="btnlist"></ul>
+<h3>Dials and the Fn lever</h3>
+<p class="muted">Top view. The lever below the mode dial flips what the rear dial does; the front dial is shutter speed in every mode.</p>
+<div class="seg" id="leverSeg"><button data-l="1">Lever 1</button><button data-l="2">Lever 2</button></div>
+<div class="card" style="padding:8px">
+<svg class="dialmap" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" aria-label="OM-3 top plate dials">
+<rect x="8" y="30" width="344" height="100" rx="12" fill="var(--panel2)"/>
+<!-- mode dial -->
+<g id="modeDial"><circle cx="70" cy="80" r="34" fill="var(--panel)" stroke="var(--line)"/>
+<g font-size="7.5" fill="var(--ink2)" text-anchor="middle">
+<text x="70" y="53">C1</text><text x="90" y="60">C2</text><text x="100" y="80">C3</text><text x="90" y="100">C4</text><text x="70" y="110">C5</text><text x="50" y="100">B</text><text x="40" y="80">M</text><text x="50" y="60">S</text><text x="56" y="84" font-size="6">A P</text>
+</g><circle id="modeDot" cx="70" cy="46" r="3" fill="var(--amber)"/></g>
+<!-- fn lever -->
+<g id="lever"><rect x="118" y="100" width="40" height="8" rx="4" fill="var(--panel)" stroke="var(--line)"/><rect id="leverKnob" x="118" y="96" width="14" height="16" rx="4" fill="var(--dial)"/><text x="138" y="124" text-anchor="middle" font-size="8" fill="var(--ink2)">Fn lever</text></g>
+<!-- front dial -->
+<g><circle cx="200" cy="50" r="22" fill="var(--panel)" stroke="var(--line)" stroke-dasharray="2 2"/><text x="200" y="47" text-anchor="middle" font-size="8" fill="var(--ink2)">front</text><text id="frontLab" x="200" y="58" text-anchor="middle" font-size="9" font-weight="600" fill="var(--ink)">Shutter</text></g>
+<!-- rear dial -->
+<g><circle cx="300" cy="80" r="26" fill="var(--panel)" stroke="var(--line)" stroke-dasharray="2 2"/><text x="300" y="76" text-anchor="middle" font-size="8" fill="var(--ink2)">rear</text><text id="rearLab" x="300" y="88" text-anchor="middle" font-size="9" font-weight="600" fill="var(--amber)">Aperture</text></g>
+<!-- creative dial -->
+<g><circle cx="200" cy="108" r="18" fill="var(--panel)" stroke="var(--line)"/><text x="200" y="105" text-anchor="middle" font-size="7" fill="var(--ink2)">creative</text><text x="200" y="114" text-anchor="middle" font-size="7" fill="var(--ink2)">dial</text></g>
+<!-- shutter -->
+<g><circle cx="150" cy="52" r="10" fill="var(--panel)" stroke="var(--line)"/><text x="150" y="72" text-anchor="middle" font-size="7.5" fill="var(--ink2)">shutter</text></g>
+</svg>
+</div>
+<div class="card amber" id="leverCard"></div>
+</section><section id="workflow">
+<h2>Shoot</h2>
+<div class="card">
+<h3 style="margin-top:0">Standing in front of a scene?</h3>
+<div class="tree" id="tree"></div>
+</div>
+<h3>Procedures · <span id="wGenre"></span></h3>
+<p class="muted">Field procedures from the Landscape/LE cheat sheet, plus setup checklists for the other genres drawn from the spreadsheet.</p>
+<div id="wf"></div>
+</section><section id="sims">
+<h2>Film simulations</h2>
+<p>The OM-3's Creative Dial exposes the Pen-F colour engine: twelve hue saturations, a three-point curve, sharpness, contrast, and — in COLOR mode — four slots that save to a custom mode. These are the community's best recipes, drawn as colour wheels so you can read a look before you dial it in.</p>
+<div class="card teal">
+<h3 style="margin-top:0">Loading a recipe</h3>
+<ol class="steps">
+<li>Creative Dial to <b>COLOR</b> (or <b>MONO</b>), press OK, pick the base profile the recipe names.</li>
+<li>Press INFO to reach the colour wheel; set the 12 values clockwise from Yellow (position 0).</li>
+<li>Next screen: Shadow / Midtone (INFO) / Highlight, then Shading, Sharpness, Contrast.</li>
+<li>White balance and the A/G or A/M shift live outside the profile — set them on the SCP.</li>
+<li>Save the whole state to a spare C-slot. The WB shift only survives that way.</li>
+</ol>
+<p class="muted" style="font-size:13px;margin:4px 0 0">Shift axes: OM-3 uses A (amber) and M (magenta); the older Pen-F recipes use A and G (green). G+2 ≈ M−2.</p>
+</div>
+<div class="card" style="padding:10px 12px">
+<h3 style="margin:4px 0 8px">Preview on a test scene</h3>
+<div id="compare"></div>
+<p class="muted" style="font-size:12.5px;margin:8px 0 0">An approximation of the engine — hue saturation, curve, contrast, WB shift, mono filter and grain — rendered in the browser. Use it to compare looks against each other, not as a promise of the camera's exact output. Send me your own frames and they replace this scene.</p>
+</div>
+<div class="toolbar" style="position:static">
+<div class="chips" id="rchips"></div>
+<div class="chips" id="achips"></div>
+</div>
+<div class="count" id="rcount"></div>
+<div class="rgrid" id="rgrid"></div>
+<h3>Base profiles</h3>
+<div class="card" id="bases"></div>
+<h3>Further reading</h3>
+<ul style="font-size:14px;padding-left:18px">
+<li><a href="https://om-recipes.com">om-recipes.com</a> — Ian Will's searchable library with downloadable recipe files.</li>
+<li><a href="https://cameraderie.org/threads/i-made-a-software-to-find-settings-that-match-the-jpeg-output-between-cameras.56900/">ibd's calibrated Fuji matches</a> — Provia, Velvia, Astia, Classic Chrome, Pro Neg, Classic Neg, Eterna, Acros, fitted with ColorChecker optimisation (table in the thread's PDF).</li>
+<li><a href="http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html">VideoPic's colour profiles</a> — the long-form explanation of "chrome" and how the colour engine works.</li>
+<li><a href="https://explore.omsystem.com/us/en/creative-recipes">OM System Creative Recipes</a> — official downloads that load from a JPEG's EXIF.</li>
+</ul>
+</section><section id="planner">
+<h2>Slot planner</h2>
+<p>Each custom slot keeps its own four colour and four mono profiles, independent of the ones on the Creative Dial. Give every slot a genre and the looks you'd actually reach for there. Saved on this device.</p>
+<div id="slots"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+<button class="btn primary" id="planBtn">Build loading sequence</button>
+<button class="btn" id="planReset">Reset</button>
+</div>
+<div id="planOut"></div>
+<p class="muted" style="font-size:13px">Discipline: more than two colour and one mono per slot and you'll stop recognising them in the field. The grid lets you fill eight; it doesn't mean you should.</p>
+</section>
+<div class="picker" id="picker"><div class="sheet"><h3 style="margin:0 0 8px" id="pickTitle">Choose a look</h3><div id="pickList"></div><button class="btn" style="margin-top:10px;width:100%" id="pickClose">Cancel</button></div></div><section id="settings">
+<h2>Settings explorer</h2>
+<div class="toolbar">
+<input type="search" id="q" placeholder="Search a setting, e.g. peaking, histogram, AF limiter" autocomplete="off">
+<div class="chips" id="tabchips"></div>
+<label class="toggle"><input type="checkbox" id="onlyDiff" checked> Only show where <span id="dGenre"></span> differs from factory default</label>
+</div>
+<div class="count" id="count"></div>
+<div id="rows"></div>
+</section><section id="nd">
+<h2>ND filter calculator</h2>
+<p>Meter the scene with no filters on (ISO 200, aperture set), read the shutter speed, pick the exposure you want. The calculator gives the ND stops to add.</p>
+<div class="card">
+<div class="calc">
+<div><label>Metered shutter (no filter)</label><select id="base"></select></div>
+<div><label>Target exposure</label><select id="target"></select></div>
+</div>
+<div class="result" id="ndres"></div>
+</div>
+<div class="card">
+<h3 style="margin-top:0">The cheat-sheet table</h3>
+<p class="muted">Rows: ND stops on the lens. Columns: wanted exposure. Cells: the unfiltered shutter speed you need to see first.</p>
+<div class="scroll"><table><thead><tr><th>ND stops</th><th>30s</th><th>2m</th><th>3m</th><th>4m</th><th>6m</th></tr></thead><tbody>
+<tr><td>6</td><td>1/2</td><td>1.6s</td><td>3s</td><td>4s</td><td>6s</td></tr>
+<tr><td>9</td><td>1/15</td><td>1/4</td><td>1/3</td><td>1/2</td><td>1/1.3</td></tr>
+<tr><td>10</td><td>1/40</td><td>1/10</td><td>1/6</td><td>1/4</td><td>1/3</td></tr>
+<tr><td>13</td><td>1/250</td><td>1/60</td><td>1/50</td><td>1/30</td><td>1/25</td></tr>
+<tr><td>16</td><td>—</td><td>1/640</td><td>1/400</td><td>1/320</td><td>1/200</td></tr>
+</tbody></table></div>
+<p style="margin-top:10px"><b>Quick check:</b> in Live Time (15 s refresh), if the histogram has reached about one-third across after 15 seconds, the 2-minute exposure will land. If it's way off, kill it and adjust ISO.</p>
+</div>
+</section><section id="learn">
+<h2>Learn</h2>
+<h3>Your first week</h3>
+<div class="path" id="week"></div>
+<h3 style="margin-top:22px">Glossary</h3>
+<input type="search" id="gq" placeholder="Search a term" style="margin-bottom:8px">
+<div class="gl" id="gl"></div>
+</section><p class="foot">Settings and reasoning by David McAughtry (mcaughtry.photo). Recipes by Ali O'Keefe, Jerred Z, GarethB, VideoPic, Dave Herring, Jack Wang, Rob Trek and the mu-43 community. Everything shown as the author published it; where a value is missing it is marked, never guessed.</p>
+</main></div></div><script>
+const DATA=[{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Reset / Custom Modes","sub":"Save Settings (initial setup)","default":"","general":"","landscape":"Hold","bif":"Hold","street":"Hold","macro":"Hold","astro":"","comment":"While setting up and first using C1-C4 any changes while in custom mode are retained"},{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Reset / Custom Modes","sub":"Save Settings (post set-up)","default":"―","general":"","landscape":"Reset","bif":"Reset","street":"Reset","macro":"Reset","astro":"","comment":"Once set up any changes have to be specifically saved to the custom setting so that accidental changes are not made (Petr Bambousek tip)"},{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Reset / Custom Modes","sub":"","default":"LF","general":"RAW","landscape":"RAW","bif":"RAW","street":"RAW","macro":"RAW","astro":"","comment":""},{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Detailed Settings","sub":"","default":"Pixel Count: L Compression: SF","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Detailed Settings","sub":"2","default":"Pixel Count: L Compression: F","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Detailed Settings","sub":"3","default":"Pixel Count: L Compression: N","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Detailed Settings","sub":"4","default":"Pixel Count: M1 Compression: N","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Image Aspect","sub":"","default":"4:3","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Image Review","sub":"","default":"Off","general":"Off","landscape":"Auto","bif":"Off","street":"Off","macro":"Auto","astro":"Off","comment":""},{"tab":"Photo 1","section":"1. Basic Settings / Image Quality","func":"Shading Compensation","sub":"","default":"Off","general":"On","landscape":"On","bif":"On","street":"On","macro":"On","astro":"On","comment":""},{"tab":"Photo 1","section":"2. Picture Mode / WB","func":"Picture Mode","sub":"","default":"Natural","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"2. Picture Mode / WB","func":"Picture Mode Settings","sub":"","default":"All Items : ✓","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"2. Picture Mode / WB","func":"WB","sub":"","default":"WB Auto","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"2. Picture Mode / WB","func":"All","sub":"A-B","default":"0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"2. Picture Mode / WB","func":"All","sub":"G-M","default":"0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"2. Picture Mode / WB","func":"Keep Warm Color","sub":"","default":"On","general":"Off","landscape":"Off","bif":"Off","street":"Off","macro":"Off","astro":"","comment":""},{"tab":"Photo 1","section":"2. Picture Mode / WB","func":"+WB","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"2. Picture Mode / WB","func":"Color Space","sub":"","default":"sRGB","general":"Adobe RGB","landscape":"Adobe RGB","bif":"Adobe RGB","street":"Adobe RGB","macro":"Adobe RGB","astro":"","comment":""},{"tab":"Photo 1","section":"3. ISO/Noise Reduction","func":"ISO-A Upper/Default","sub":"Upper Limit","default":"25600","general":"6400","landscape":"6400","bif":"12800","street":"6400","macro":"6400","astro":"","comment":"Higher for BIF"},{"tab":"Photo 1","section":"3. ISO/Noise Reduction","func":"ISO-A Upper/Default","sub":"Default","default":"200","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"3. ISO/Noise Reduction","func":"ISO-A Lowest S/S","sub":"","default":"Auto","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"3. ISO/Noise Reduction","func":"ISO-Auto","sub":"","default":"P/A/S/M","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"3. ISO/Noise Reduction","func":"ISO Step","sub":"","default":"1/3EV","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"3. ISO/Noise Reduction","func":"Noise Filter","sub":"","default":"Standard","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"3. ISO/Noise Reduction","func":"Low ISO Processing","sub":"","default":"Drive Priority","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"3. ISO/Noise Reduction","func":"Noise Reduction","sub":"","default":"Auto","general":"Off","landscape":"Off","bif":"Off","street":"Off","macro":"Off","astro":"","comment":""},{"tab":"Photo 1","section":"4. Exposure","func":"Flicker Scan","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"4. Exposure","func":"EV Step","sub":"","default":"1/3EV","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"4. Exposure","func":"Exposure Shift","sub":"","default":"±0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"5. Metering","func":"Metering During","sub":"","default":"Auto","general":"ESP, Fn=Spot","landscape":"Spot, Fn=Spot Shadow","bif":"ESP, Fn=Spot","street":"ESP, Fn=Spot","macro":"ESP, Fn=Spot","astro":"ESP, Fn=Spot","comment":"In all except landscape, default is ESP and can get spot by pressing Fn/AEL button. Landscape is default spot but spot -3EV Spot (Sh) for Fn/AEL. NOTE:- Need to start AEL for every new reading: i.e double-press Fn/AEL button for each new AEL reading"},{"tab":"Photo 1","section":"5. Metering","func":"Auto Reset","sub":"","default":"No","general":"Yes","landscape":"Yes","bif":"Yes","street":"Yes","macro":"Yes","astro":"Yes","comment":"After taking a shot, reverts to default metering"},{"tab":"Photo 1","section":"5. Metering","func":"AEL by half-pressing","sub":"","default":"S-AF Only","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"5. Metering","func":"Metering during","sub":"","default":"Yes","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"5. Metering","func":"Spot Metering","sub":"","default":"All Items: ✓","general":"All Items: ✓","landscape":"All Items: ✓","bif":"All Items: ✓","street":"All Items: ✓","macro":"All Items: ✓","astro":"All Items: ✓","comment":""},{"tab":"Photo 1","section":"6. Flash","func":"RC Mode","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"6. Flash","func":"X-Sync.","sub":"","default":"1/250sec","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"6. Flash","func":"Slow Limit","sub":"","default":"1/60sec","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"6. Flash","func":"+","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"6. Flash","func":"Balanced Flash Metering","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"6. Flash","func":"Flash Mode Settings","sub":"Reduce Red-eye","default":"No","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"6. Flash","func":"Flash Mode Settings","sub":"Synchro Settings","default":"First Curtain","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Drive","sub":"","default":"","general":"Single Silent","landscape":"2s timer","bif":"SH2 25","street":"Silent sequential 10","macro":"Single Silent","astro":"2s timer","comment":"My street style is to shoot in burst (like BIF) for the best moment but with lower fps. With SH2, min SS is 1/160, so have to use Silent sequential to allow speeds below 1/160"},{"tab":"Photo 1","section":"7. Drive Mode","func":"Anti-Flicker Shooting","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"Off","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"","default":"✓","general":"On","landscape":"Off","bif":"Off","street":"Off","macro":"Off","astro":"Off","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Max fps","default":"6fps","general":"6fps","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Frame Count Limiter","default":"Off","general":"Off","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"♥︎","default":"✓","general":"On","landscape":"On","bif":"Off","street":"On","macro":"On","astro":"On","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Max fps","default":"20fps","general":"20","landscape":"20","bif":"","street":"10","macro":"20","astro":"20","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Frame Count Limiter","default":"Off","general":"Off","landscape":"Off","bif":"","street":"Off","macro":"Off","astro":"Off","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"♥︎ SH1","default":"✓","general":"On","landscape":"Off","bif":"Off","street":"Off","macro":"Off","astro":"Off","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Max fps","default":"120fps","general":"120fps","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"♥︎ SH2","default":"✓","general":"On","landscape":"Off","bif":"On","street":"On","macro":"Off","astro":"Off","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Max fps","default":"50fps","general":"25","landscape":"","bif":"25","street":"12.5","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Frame Count Limiter","default":"Off","general":"Off","landscape":"","bif":"Off","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"ProCap","default":"✓","general":"Off","landscape":"Off","bif":"Off","street":"Off","macro":"Off","astro":"Off","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Max fps","default":"20fps","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Pre-shutter Frames","default":"10","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Frame Count Limiter","default":"50","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"ProCap SH1","default":"✓","general":"On","landscape":"Off","bif":"On","street":"Off","macro":"Off","astro":"Off","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Max fps","default":"120fps","general":"100","landscape":"","bif":"100","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Pre-shutter Frames","default":"20","general":"30","landscape":"","bif":"50","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Frame Count Limiter","default":"50","general":"50","landscape":"","bif":"90","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"ProCap SH2","default":"","general":"On","landscape":"Off","bif":"On","street":"On","macro":"On","astro":"On","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Max fps","default":"50fps","general":"25","landscape":"","bif":"25","street":"12.5","macro":"25","astro":"25","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Pre-shutter Frames","default":"12","general":"15","landscape":"","bif":"15","street":"10","macro":"10","astro":"10","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Sequential Shooting Settings","sub":"Frame Count Limiter","default":"50","general":"25","landscape":"","bif":"25","street":"10","macro":"10","astro":"10","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"12","default":"✓","general":"Off","landscape":"Off","bif":"Off","street":"Off","macro":"Off","astro":"Off","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"♥︎ 12","default":"☐ (without ✓)","general":"Off","landscape":"Off","bif":"Off","street":"Off","macro":"Off","astro":"Off","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"2","default":"✓","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"♥︎ 2","default":"✓","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"C","default":"✓","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"Number of Frames","default":"3f","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"Timer","default":"0:00:01","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"Interval Length","default":"0.5s","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"Frame Counter Limiter","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Self-timer Settings","sub":"♥︎ C","default":"☐ (without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Antl-Shock [♦︎] Settings","sub":"Anti-Shock [♦︎]","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Antl-Shock [♦︎] Settings","sub":"Waiting Time","default":"0sec","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Silent [♥︎] Settings","sub":"Waiting Time","default":"0sec","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Silent [♥︎] Settings","sub":"Noise Reduction","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Silent [♥︎] Settings","sub":"","default":"Not Allowed","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Silent [♥︎] Settings","sub":"AF Illuminator","default":"Not Allowed","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"7. Drive Mode","func":"Silent [♥︎] Settings","sub":"Flash Mode","default":"Not Allowed","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"8. Image Stabilizer","func":"Image Stabilizer","sub":"","default":"S-IS Auto","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"8. Image Stabilizer","func":"Image Stabilizer","sub":"","default":"FPS Priority","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"8. Image Stabilizer","func":"Image Stabilizer","sub":"","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"8. Image Stabilizer","func":"Handheld Assist","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 1","section":"8. Image Stabilizer","func":"Lens I.S. Priority","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"High Res Shot","sub":"High Res Shot","default":"Off","general":"CP button","landscape":"CP button","bif":"","street":"","macro":"CP button","astro":"CP button","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"High Res Shot","sub":"","default":"F+Raw","general":"50mp HH 80Mb HR","landscape":"50mp HH 80Mb HR","bif":"","street":"","macro":"50mp HH 80Mb HR","astro":"50mp HH 80Mb HR","comment":"Now produces a file with same resolution and DR as a Nikon Z7, Z8, Z9 hand held"},{"tab":"Photo 2","section":"1. Computational Modes","func":"High Res Shot","sub":"Raw recording Bit","default":"12bit","general":"12 bit","landscape":"12 bit","bif":"","street":"","macro":"12 bit","astro":"12 bit","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"High Res Shot","sub":"Waiting Time","default":"0sec","general":"2s","landscape":"2s","bif":"","street":"","macro":"2s","astro":"2s","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"High Res Shot","sub":"Charge Time","default":"0sec","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"Live ND Shooting","sub":"Live ND Shooting","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"Live ND Shooting","sub":"ND Number","default":"ND8 (3EV)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"Live ND Shooting","sub":"LV Simulation","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"Focus Stacking","sub":"Focus Stacking","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"Focus Stacking","sub":"Set Number of Shots","default":"8","general":"","landscape":"","bif":"","street":"","macro":"15","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"Focus Stacking","sub":"Set Focus Differential","default":"5","general":"","landscape":"","bif":"","street":"","macro":"4","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"Focus Stacking","sub":"Charge Time","default":"0sec","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"HDR","sub":"","default":"Off","general":"3F 2EV","landscape":"3F 2EV","bif":"Off","street":"Off","macro":"Off","astro":"","comment":"HDR 3x2 produces 3 Raw files rather than 1 JPG"},{"tab":"Photo 2","section":"1. Computational Modes","func":"Multiple Exposure","sub":"Multiple Exposure","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"Multiple Exposure","sub":"Auto Gain","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"1. Computational Modes","func":"Multiple Exposure","sub":"Overlay","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Digital Tele-converter","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Interval Shooting","sub":"Interval Shooting","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Interval Shooting","sub":"Number of Frames","default":"100","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Interval Shooting","sub":"Start Waiting Time","default":"1s","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Interval Shooting","sub":"Interval Length","default":"1s","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Interval Shooting","sub":"Interval Mode","default":"Time Priority","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Interval Shooting","sub":"Exposure Smoothing","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Interval Shooting","sub":"Time Lapse Movie","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Interval Shooting","sub":"Movie Settings","default":"FullHD","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Interval Shooting","sub":"Frame rate","default":"10fps","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Keystone Compensation","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Fisheye Compensation","sub":"Fisheye Compensation","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Fisheye Compensation","sub":"Angle","default":"1","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"Fisheye Compensation","sub":"Compensation","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"BULB/TIME/Composite Settings","sub":"Bulb/Time Focusing","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"BULB/TIME/Composite Settings","sub":"Bulb/Time Timer","default":"8min","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"BULB/TIME/Composite Settings","sub":"Live Composite Timer","default":"3hour","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"BULB/TIME/Composite Settings","sub":"Bulb/Time Monitor","default":"-7","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"BULB/TIME/Composite Settings","sub":"Live Bulb","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"BULB/TIME/Composite Settings","sub":"Live Time","default":"0.5sec","general":"15s","landscape":"15s","bif":"","street":"","macro":"","astro":"","comment":"Enables an instant exposure check - histogram needs to be 1/3 exposed after 15s for a 2m shot"},{"tab":"Photo 2","section":"2. Other Shooting Functions","func":"BULB/TIME/Composite Settings","sub":"Composite Settings","default":"1/2sec","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"AE BKT","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"WB BKT","sub":"A-B","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"WB BKT","sub":"G-M","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"Flash Level BKT","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"ISO BKT","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"ART BKT","sub":"ART BKT","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"ART BKT","sub":"ART BKT Setting","default":"ART only: ✓(ART with multiple types: only the [ type is checked ✓.)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"Focus BKT","sub":"Focus BKT","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"On","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"Focus BKT","sub":"Set number of shots","default":"99","general":"","landscape":"","bif":"","street":"","macro":"50","astro":"","comment":"For Macro I use Helicon to stack, so just run as many shots as needed to get focus from front to back, and stop when done."},{"tab":"Photo 2","section":"3. Bracketing","func":"Focus BKT","sub":"Set focus differential","default":"5","general":"","landscape":"","bif":"","street":"","macro":"3","astro":"","comment":""},{"tab":"Photo 2","section":"3. Bracketing","func":"Focus BKT","sub":"Charge Time","default":"0sec","general":"","landscape":"","bif":"","street":"","macro":"0","astro":"","comment":""},{"tab":"AF","section":"1. AF Mode","func":"AF Mode","sub":"","default":"S-AF","general":"SAF/MF","landscape":"CAF/MF","bif":"CAF/MF","street":"CAF/MF","macro":"SAF/MF","astro":"SSAF","comment":""},{"tab":"AF","section":"1. AF Mode","func":"AF+MF","sub":"","default":"Off","general":"On","landscape":"On","bif":"On","street":"On","macro":"Off","astro":"Off","comment":""},{"tab":"AF","section":"1. AF Mode","func":"Starry Sky AF Setting","sub":"AF Priority","default":"Speed","general":"Accuracy","landscape":"Accuracy","bif":"Accuracy","street":"Accuracy","macro":"Accuracy","astro":"Accuracy","comment":""},{"tab":"AF","section":"1. AF Mode","func":"Starry Sky AF Setting","sub":"AF Operation","default":"AF-ON Start/Stop","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"1. AF Mode","func":"Starry Sky AF Setting","sub":"Release Priority","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"1. AF Mode","func":"AF by half-pressing","sub":"S-AF","default":"Yes","general":"No","landscape":"No","bif":"Yes","street":"Yes","macro":"No","astro":"No","comment":"For BIF may be using Pro Cap which needs front button, so use same button for normal focus. For landscape/macro, dont want it refocussing after manual focus is set, so it is off."},{"tab":"AF","section":"1. AF Mode","func":"AF by half-pressing","sub":"C-AF/C-AF+TR","default":"Yes","general":"No","landscape":"No","bif":"Yes","street":"Yes","macro":"","astro":"","comment":""},{"tab":"AF","section":"1. AF Mode","func":"AF--on in MF mode","sub":"","default":"No","general":"Yes","landscape":"Yes","bif":"No","street":"No","macro":"Yes","astro":"Yes","comment":""},{"tab":"AF","section":"1. AF Mode","func":"Release Priority","sub":"S-AF","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"1. AF Mode","func":"Release Priority","sub":"C-AF/C-AF+TR","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"2. AF Subject","func":"Subject Detection","sub":"","default":"Off","general":"Off","landscape":"Off","bif":"On/Bird","street":"On/People","macro":"Yes","astro":"Yes","comment":""},{"tab":"AF","section":"2. AF Subject","func":"Subject C-AF setting","sub":"","default":"All","general":"","landscape":"","bif":"Target","street":"Target","macro":"","astro":"","comment":""},{"tab":"AF","section":"2. AF Subject","func":"Subject AF Button","sub":"","default":"Priority","general":"","landscape":"","bif":"Normal CAF","street":"Normal CAF","macro":"","astro":"","comment":"AF-on button is subject AF, Shutter button is normal CAF"},{"tab":"AF","section":"2. AF Subject","func":"Subject AF Button","sub":"Af-on","default":"Priority","general":"","landscape":"","bif":"Subject AF","street":"Subject AF","macro":"","astro":"","comment":""},{"tab":"AF","section":"2. AF Subject","func":"Eye Detection Frame","sub":"","default":"On","general":"","landscape":"","bif":"On","street":"On","macro":"","astro":"","comment":""},{"tab":"AF","section":"3. AF General","func":"AF Illuminator","sub":"","default":"On","general":"Off","landscape":"Off","bif":"Off","street":"Off","macro":"On","astro":"","comment":""},{"tab":"AF","section":"3. AF General","func":"AF Area Pointer","sub":"","default":"On1","general":"On2","landscape":"On2","bif":"On2","street":"On2","macro":"On2","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"C-AF Sensitivity","sub":"","default":"±0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"C-AF Center Priority","sub":"Cross","default":"✓","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"C-AF Center Priority","sub":"Mid","default":"✓","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"C-AF Center Priority","sub":"Large","default":"✓","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"C-AF Center Priority","sub":"C1","default":"◻︎(without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"C-AF Center Priority","sub":"C2","default":"◻︎(without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"C-AF Center Priority","sub":"C3","default":"◻︎(without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"C-AF Center Priority","sub":"C4","default":"◻︎(without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"AF Limiter","sub":"AF Limiter","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"AF Limiter","sub":"Distance for On1","default":"5.0 - 999.9m","general":"","landscape":"","bif":"3-50","street":"","macro":"","astro":"","comment":"Aim here is for realistic distances for BIF and lens. This is for 40-150 with 1.4TC"},{"tab":"AF","section":"4. AF Sensitivity","func":"AF Limiter","sub":"Distance for On2","default":"10.0 - 999.9","general":"","landscape":"","bif":"5-200","street":"","macro":"","astro":"","comment":"This is for 300mm. Never going to be taking a shot of a bird 1km away and even at 200m it will be too small in the frame"},{"tab":"AF","section":"4. AF Sensitivity","func":"AF Limiter","sub":"Distance for On3","default":"50.0 - 999.9","general":"","landscape":"","bif":"20-300","street":"","macro":"","astro":"","comment":"This is for 300mm plus 1.4TC. 300m is to try to get the bird in focus as it flies in."},{"tab":"AF","section":"4. AF Sensitivity","func":"AF Limiter","sub":"Release Priority","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"AF Scanner","sub":"","default":"On","general":"On","landscape":"On","bif":"On","street":"On","macro":"On","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"AF Focus Adjustment","sub":"AF Focus Adjustment","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"4. AF Sensitivity","func":"AF Focus Adjustment","sub":"Fine-tuning Value","default":"±0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"5. Movie AF","func":"AF Mode","sub":"","default":"C-AF","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"5. Movie AF","func":"C-AF Speed","sub":"","default":"±0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"5. Movie AF","func":"C-AF Sensitivity","sub":"","default":"±0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Target Mode Settings","sub":"All","default":"✓","general":"","landscape":"","bif":"✓","street":"✓","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Target Mode Settings","sub":"Single","default":"✓","general":"✓","landscape":"✓","bif":"✓","street":"✓","macro":"✓","astro":"✓","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Target Mode Settings","sub":"Cross","default":"✓","general":"","landscape":"","bif":"✓","street":"✓","macro":"✓","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Target Mode Settings","sub":"Mid","default":"✓","general":"","landscape":"","bif":"✓","street":"✓","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Target Mode Settings","sub":"Large","default":"✓","general":"","landscape":"","bif":"✓","street":"✓","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Target Mode Settings","sub":"C1","default":"✓ tiny dot","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Target Mode Settings","sub":"C2","default":"◻︎(without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Target Mode Settings","sub":"C3","default":"◻︎(without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Target Mode Settings","sub":"C4","default":"◻︎(without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"Orientation Linked","sub":"AF Target Mode","default":"◻︎(without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"Orientation Linked","sub":"AF Target Point","default":"◻︎(without ✓)","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"Set Home","sub":"AF Target Mode","default":"✓ ( All)","general":"Single","landscape":"Single","bif":"All","street":"Small","macro":"Single","astro":"Single","comment":"I find the larger single dot too small for precise landscpe focus, so use the tiny dot in the custom section."},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"Set Home","sub":"AF Target Point","default":"✓","general":"Center","landscape":"Center","bif":"Center","street":"Center","macro":"Center","astro":"Center","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"Select Screen Settings","sub":"dial","default":"Mode","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"Select Screen Settings","sub":"button","default":"Pos","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"Loop Settings","sub":"Loop Selection","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"Loop Settings","sub":"Via All","default":"No","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"6. AF Target Settings & Operations","func":"AF Targeting Pad","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"7. MF","func":"MF Assist","sub":"Magnify","default":"Off","general":"On","landscape":"On","bif":"Off","street":"Off","macro":"Off","astro":"","comment":""},{"tab":"AF","section":"7. MF","func":"MF Assist","sub":"Peaking","default":"Off","general":"On","landscape":"On","bif":"Off","street":"Off","macro":"On","astro":"On","comment":"Dont want peaking for BIF or street as its very distracting"},{"tab":"AF","section":"7. MF","func":"MF Assist","sub":"Focus Indicator","default":"Off","general":"Off","landscape":"Off","bif":"Off","street":"Off","macro":"On","astro":"On","comment":""},{"tab":"AF","section":"7. MF","func":"Peaking Settings","sub":"Peaking Color","default":"Red","general":"","landscape":"","bif":"","street":"","macro":"Yellow","astro":"Yellow","comment":""},{"tab":"AF","section":"7. MF","func":"Peaking Settings","sub":"Highlight Intensity","default":"Normal","general":"","landscape":"","bif":"","street":"","macro":"High","astro":"High","comment":""},{"tab":"AF","section":"7. MF","func":"Peaking Settings","sub":"Image Brightness Adjustment","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"On","astro":"On","comment":""},{"tab":"AF","section":"7. MF","func":"Preset MF distance","sub":"","default":"999.9m","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"AF","section":"7. MF","func":"MF Clutch","sub":"","default":"Operative","general":"Inoperative","landscape":"Inoperative","bif":"Inoperative","street":"Inoperative","macro":"Operative","astro":"","comment":"Manual clutch is a PitA for most genres but a must for the 90mm macro"},{"tab":"AF","section":"7. MF","func":"Reset Lens","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"Fn (AEL)","default":"","general":"AEL/Spot","landscape":"AEL/Spot sh","bif":"AEL/Spot","street":"AEL/Spot","macro":"AEL/Spot","astro":"Magnify","comment":"Do not need spot metering for macro usually, but magnify is very useful"},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"Rec (red)","default":"Rec","general":"Focus bracket","landscape":"Focus bracket","bif":"Select Subject","street":"Select Person","macro":"Focus Bracket","astro":"Focus Bracket","comment":"Bracket functions not available on CP button"},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"AF-ON","default":"AF-ON","general":"AF-on/back button focus","landscape":"AF-on/ BBF","bif":"AF-on/ BBF","street":"AF-on/ BBF","macro":"AF-on/ BBF","astro":"Peaking","comment":"Don't need BBF for macro, but do need to have peaking on demand"},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"CP","default":"CP","general":"CP","landscape":"CP","bif":"CP","street":"CP","macro":"CP","astro":"CP","comment":"CP button replaces 4 dedicated function buttons on OM1 Mk II"},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"|O| (LV/view)","default":"View Selection","general":"Night LV","landscape":"Night LV","bif":"Night LV","street":"Night LV","macro":"Night LV","astro":"Night LV","comment":"Night LV essential for low light landscape, macro and astro."},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"Left arrow","default":"Off","general":"Direct","landscape":"Direct","bif":"Direct","street":"Direct","macro":"Direct","astro":"Direct","comment":"Left arrow click to move focus point replaces joystick on OM-1. For landscape and astro, use touch screen"},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"Right arrow","default":"Off","general":"ISO","landscape":"ISO","bif":"ISO","street":"ISO","macro":"ISO","astro":"ISO","comment":"Right and down arrow buttons for ISO and Drive replace missing function buttons"},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"Down arrow","default":"Off","general":"Drive","landscape":"Drive","bif":"Drive","street":"Drive","macro":"Drive","astro":"Drive","comment":""},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"Button Function","default":"","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"CP","default":"CP","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"AF-ON","default":"AF-ON","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"1. Operations","func":"Button Settings","sub":"Center Button","default":"Off","general":"Home","landscape":"Home","bif":"Home","street":"Home","macro":"Mode 1 (changes dial)","astro":"Home","comment":""},{"tab":"Gear","section":"1. Operations","func":"Fn Lever Settings","sub":"Fn Lever Function","default":"mode2","general":"Mode 1 (changes dial)","landscape":"Mode 1 (changes dial)","bif":"Mode 1 (changes dial)","street":"Mode 1 (changes dial)","macro":"Mode 1 (changes dial)","astro":"Mode 1 (changes dial)","comment":"In line with dial changes above"},{"tab":"Gear","section":"1. Operations","func":"Fn Lever Settings","sub":"Fn Lever Function","default":"mode2","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"1. Operations","func":"Fn Lever Settings","sub":"Fn Lever/Power Lever","default":"Fn","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"1. Operations","func":"Electronic Zoom Settings","sub":"Elec. Zoom Speed","default":"Normal","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"2. Operations","func":"LV Close Up Mode","sub":"","default":"mode2","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"2. Operations","func":"Lock","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"2. Operations","func":"Priority Set","sub":"","default":"No","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"2. Operations","func":"Menu Cursor Settings","sub":"Page Cursor Position","default":"Reset","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"2. Operations","func":"Menu Cursor Settings","sub":"Menu Start Position","default":"Recently","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"2. Operations","func":"Menu Cursor Settings","sub":"Shortcut to B Mode Settings","default":"On","general":"Off","landscape":"Off","bif":"Off","street":"Off","macro":"Off","astro":"","comment":"Live time image display is always every 15s, so I use the normal menu rather than bulb menu when in live time"},{"tab":"Gear","section":"3. Live View","func":"LV Mode","sub":"","default":"Standard","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"3. Live View","func":"Night Vision","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"3. Live View","func":"Frame rate","sub":"","default":"Normal","general":"","landscape":"","bif":"High","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"3. Live View","func":"Art LV Mode","sub":"","default":"mode1","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"3. Live View","func":"Anti-Flicker LV","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"3. Live View","func":"Selfie Assist","sub":"","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"4. Information","func":"EVF Style","sub":"","default":"Style 2","general":"Style 2","landscape":"Style 2","bif":"Style 2","street":"Style 2","macro":"Style 2","astro":"","comment":""},{"tab":"Gear","section":"4. Information","func":"Info Settings","sub":"","default":"[Image Only], [Information 1]✓","general":"Image only + Inf 1 (Hist, H&S, Level)","landscape":"Image only + Inf 1 (Hist, H&S, Level)","bif":"Inf 1 only (H&S)","street":"Inf 1 only (H&S)","macro":"Inf 1 only (nothing ticked)","astro":"","comment":"BIF and Street want only H&S, Macro want screen info but no other items"},{"tab":"Gear","section":"4. Information","func":"Info by half-pressing","sub":"","default":"On2","general":"On1","landscape":"On1","bif":"On1","street":"On1","macro":"On1","astro":"","comment":"Only exposure info on half press"},{"tab":"Gear","section":"4. Information","func":"Info Settings","sub":"","default":"[Image Only], [Information 1], [Information 2]: ✓","general":"Image only + Inf 1 (Hist, H&S, Level)","landscape":"Image only + Inf 1 (Hist, H&S, Level)","bif":"Inf 1 only (H&S)","street":"Inf 1 only (H&S)","macro":"Inf 1 only (nothing ticked)","astro":"","comment":"For Bif and Street I always want the over/under blinkies, so I trun off the clear screen"},{"tab":"Gear","section":"4. Information","func":"Level Gauge","sub":"","default":"On","general":"","landscape":"","bif":"Off","street":"Off","macro":"","astro":"","comment":""},{"tab":"Gear","section":"4. Information","func":"Info Settings","sub":"","default":"[Image Only], [Information 1]: ✓","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"5. Grid/Other Displays","func":"Grid Settings","sub":"Displayed Grid","default":"Off","general":"3rds","landscape":"3rds","bif":"Off","street":"3rds","macro":"3rds","astro":"","comment":""},{"tab":"Gear","section":"5. Grid/Other Displays","func":"Grid Settings","sub":"Displayed Grid","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"5. Grid/Other Displays","func":"Multi Function Settings","sub":"","default":"All items except ISO: ✓","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Gear","section":"5. Grid/Other Displays","func":"Histogram Settings","sub":"Highlight","default":"255","general":"245/10","landscape":"245/10","bif":"250/5","street":"250/5","macro":"250/5","astro":"","comment":"Conservative for landscape/macro"},{"tab":"Gear","section":"5. Grid/Other Displays","func":"Histogram Settings","sub":"Shadow","default":"0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"1. Card/Folder/File","func":"Card Formatting","sub":"","default":"——-","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"1. Card/Folder/File","func":"Assign Save Folder","sub":"","default":"Do not assign","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"1. Card/Folder/File","func":"Filename","sub":"","default":"","general":"Auto","landscape":"Auto","bif":"Auto","street":"Auto","macro":"Auto","astro":"","comment":""},{"tab":"Wrench","section":"1. Card/Folder/File","func":"Edit Filename","sub":"sRGB","default":"M D D","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"1. Card/Folder/File","func":"Edit Filename","sub":"Adobe RGB","default":"M D D","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"2. Information Record","func":"Lens Info Settings","sub":"","default":"Off","general":"","landscape":"","bif":"Auto","street":"Auto","macro":"Auto","astro":"","comment":""},{"tab":"Wrench","section":"2. Information Record","func":"dpi Settings","sub":"","default":"350dpi","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"2. Information Record","func":"Copyright Info","sub":"Copyright Info","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"2. Information Record","func":"Copyright Info","sub":"Artist Name","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"2. Information Record","func":"Copyright Info","sub":"Copyright Name","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"Touchscreen Settings","sub":"","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"Monitor Adjust","sub":"(Brightness)","default":"±0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"Monitor Adjust","sub":"(Color temperature)","default":"A0, G0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"EVF Adjust","sub":"(Brightness)","default":"Auto","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"EVF Adjust","sub":"(Color temperature)","default":"A0, G0","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"Eye Sensor Settings","sub":"EVF Auto Switch","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"Eye Sensor Settings","sub":"Behavior when switched","default":"Maintain Screen","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"Eye Sensor Settings","sub":"When Monitor is Opened","default":"Inoperative","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"Eye Sensor Settings","sub":"","default":"On","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"HDMI Settings","sub":"Output Size","default":"4K","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"HDMI Settings","sub":"Output Frame Rate","default":"60p Priority","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"USB Settings","sub":"USB Mode","default":"Select","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"3. Monitor/Sound/ Connection","func":"USB Settings","sub":"Power Supply from USB","default":"Yes","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"Airplane Mode","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"Bluetooth","sub":"","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"Wireless Shutter Setting","sub":"","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"WiFi /Bluetooth","sub":"","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"Settings","sub":"Power-off Standby","default":"Off","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"Settings","sub":"Connection Security","default":"——","general":"WPA2/3","landscape":"WPA2/3","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"Settings","sub":"Connection Password","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"Settings","sub":"Reset Settings","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"WiFi PC Settings","sub":"WiFi MAC Address","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"4. WiFi/Bluetooth","func":"WiFi PC Settings","sub":"Reset WiFi PC Settings","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":"New function from FW 1.2, allows OI share connection to non-registered camera"},{"tab":"Wrench","section":"5. Battery/Sleep","func":"Battery Status","sub":"","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"5. Battery/Sleep","func":"Display Pattern","sub":"","default":"min","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"5. Battery/Sleep","func":"Backlit LCD","sub":"","default":"Hold","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"5. Battery/Sleep","func":"Sleep","sub":"","default":"1min","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"5. Battery/Sleep","func":"Auto Power Off","sub":"","default":"4h","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"5. Battery/Sleep","func":"Quick Sleep Mode","sub":"Quick Sleep Mode","default":"Off","general":"On","landscape":"On","bif":"On","street":"On","macro":"On","astro":"On","comment":""},{"tab":"Wrench","section":"5. Battery/Sleep","func":"Quick Sleep Mode","sub":"Backlit LCD","default":"8sec","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"5. Battery/Sleep","func":"Quick Sleep Mode","sub":"Sleep","default":"10sec","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"6. Reset/Clock/ Language/Others","func":"Reset/Initialize Settings","sub":"Reset Shooting Settings","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"6. Reset/Clock/ Language/Others","func":"Reset/Initialize Settings","sub":"Initialize All Settings","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"6. Reset/Clock/ Language/Others","func":"Settings","sub":"","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"6. Reset/Clock/ Language/Others","func":"Settings","sub":"Time Zone","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"6. Reset/Clock/ Language/Others","func":"Level Adjust","sub":"","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"6. Reset/Clock/ Language/Others","func":"Pixel Mapping","sub":"","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"6. Reset/Clock/ Language/Others","func":"Firmware Version","sub":"","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"6. Reset/Clock/ Language/Others","func":"Certification","sub":"","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""},{"tab":"Wrench","section":"6. Reset/Clock/ Language/Others","func":"Battery Status","sub":"","default":"——","general":"","landscape":"","bif":"","street":"","macro":"","astro":"","comment":""}];
+const GENRES=[
+ {k:'landscape',c:'C1',n:'Landscape / LE',iso:'ISO 200',lever:'Position 2',
+  intro:'Tripod, manual focus, long exposure. Silent shutter in C1 (no NR) for fast test shots; Bulb/Live Time for the real frame. Spot metering is the default here, with the Fn button giving spot-shadow (−3 EV).',
+  key:['Drive: single, silent','AF: S-AF + MF, half-press does NOT refocus','Metering: spot by default; Fn = spot shadow, auto-reset after each shot','Image review on (Auto) to check LE results','Histogram 245/10 for a conservative display','HDR 3F 2EV and 50 MP handheld Hi-Res ready on CP']},
+ {k:'bif',c:'C2',n:'Birds in flight',iso:'Auto ISO to 12800',lever:'Position 1',
+  intro:'Burst, bird detection, exposure compensation on the rear dial. SH2 at 25 fps with Pro Capture SH2 pre-buffering 15 frames. AF-ON triggers subject AF; the shutter half-press does normal C-AF.',
+  key:['Drive: SH2 25 fps; ProCap SH2 ready (15 pre-shutter frames)','AF: C-AF + MF, bird detection on, subject AF on AF-ON','AF limiter presets 3–50 m / 5–200 m / 20–300 m for 40-150+TC, 300, 300+TC','Metering: ESP, Fn = spot','Display: highlights & shadows only, no clear-screen page','LV frame rate High, no peaking (distracting)']},
+ {k:'street',c:'C3',n:'Street',iso:'Auto ISO to 6400',lever:'Position 1',
+  intro:'Low-fps bursts to catch the moment, people detection, exposure compensation on the rear dial. Silent sequential at 10 fps so shutter speeds below 1/160 are still allowed.',
+  key:['Drive: silent sequential 10 fps (SH2 forces ≥1/160)','AF: C-AF + MF, people detection, AF-ON = subject AF','Home target: Small','Metering: ESP, Fn = spot','Display: highlights & shadows only, grid off, level off','Rec button = Select Person']},
+ {k:'macro',c:'C4',n:'Macro',iso:'ISO 200',lever:'Position 2',
+  intro:'Manual focus with the clutch, peaking on, focus bracketing for stacking in Helicon. Magnify on the Fn button instead of spot metering.',
+  key:['Drive: single, silent, 2 s timer available','AF: S-AF + MF, MF clutch operative, half-press does NOT refocus','Peaking yellow, high intensity, focus indicator on','Focus BKT on: 50 shots, differential 3; stacking 15 × 4 if in-camera','Fn = Magnify, AF-ON = Peaking toggle? no — AF-ON stays BBF; Astro uses Peaking','Image review Auto; AF illuminator on']},
+ {k:'astro',c:'C5',n:'Astro',iso:'ISO 200',lever:'Position 2',
+  intro:'Starry Sky AF (accuracy priority), peaking on AF-ON, magnify on Fn, Night LV on the |O| button. 2 s timer drive.',
+  key:['AF: Starry Sky AF, accuracy priority, AF-ON start/stop','Fn = Magnify, AF-ON = Peaking, Rec = Focus bracket','Drive: 2 s timer','Peaking yellow, high, with image brightness adjust','Night LV to compose','Grid: thirds']},
+];
+// fix a sloppy key line
+GENRES[3].key[4]='Fn = Magnify (spot metering rarely needed); AF-ON stays back-button focus';
+
+const BUTTONS={
+ fn:{n:'Fn',landscape:'AEL / spot shadow',bif:'AEL / spot',street:'AEL / spot',macro:'AEL / spot',astro:'Magnify',
+     why:{landscape:'Spot is already default; Fn gives −3 EV spot-shadow for rocks. Double-press for each new reading.',bif:'Default ESP; press for a spot reading on the bird.',street:'Default ESP; spot on a face when backlit.',macro:'Rarely needed in macro.',astro:'Magnify to nail star focus.'}},
+ rec:{n:'Rec',landscape:'Focus bracket',bif:'Select Subject',street:'Select Person',macro:'Focus bracket',astro:'Focus bracket',
+     why:{landscape:'BKT functions are not on the CP button, so they live here.',bif:'Cycles the subject-detection type.',street:'Toggles people detection.',macro:'Starts the bracket run for stacking.',astro:'Bracket run if needed.'}},
+ afon:{n:'AF-ON',landscape:'AF (back button)',bif:'Subject AF',street:'Subject AF',macro:'AF (back button)',astro:'Peaking',
+     why:{landscape:'S-AF only when you ask for it; the shutter never refocuses.',bif:'Subject-priority AF; the shutter half-press runs plain C-AF.',street:'Subject-priority AF; shutter half-press runs plain C-AF.',macro:'Back-button focus to get close, then clutch to MF.',astro:'Peaking on demand while focusing manually.'}},
+ cp:{n:'CP',all:'Computational menu',why:'Hi-Res, Live ND, HDR, Focus stack, Live GND — press, then front dial.'},
+ lv:{n:'|O|',all:'Night LV',why:'Brightens live view in the dark. Essential for low-light landscape, macro and astro.'},
+ left:{n:'◀',all:'Move AF point',why:'Replaces the OM-1 joystick. Landscape and astro: use the touch screen instead.'},
+ right:{n:'▶',all:'ISO',why:'Replaces a missing function button.'},
+ down:{n:'▼',all:'Drive',why:'Replaces a missing function button.'},
+ ok:{n:'OK',all:'Home AF target',why:'Press to jump to the home target (Single, centre; Street uses Small).'},
+};
+
+const WORKFLOWS={
+ landscape:[
+  ['Before any session',['Recall C1 into main memory (Reset/Custom Modes → Recall) so M and B share the same settings','Fn lever to position 2','Check IS, HDR, BKT, LND, NLV icons are all off on the monitor','Save to slot 2 by default']],
+  ['Standard landscape on tripod',['ISO 200, f/5.6, adjust shutter until the histogram sits right and the over/under blinkies balance','Bright day on the monitor: turn monitor brightness up','Touch screen to place the focus point, or focus with AF-ON; confirm with the MF clutch if needed','Fire with 2 s timer or remote','High DR, single shot with movement: GND on CP','High DR, layered shot with movement: HDR 3F 2EV (CP)','High DR, no movement: Live ND 64 (gains ~2.5 stops of DR)']],
+  ['Tripod long exposure, 1–2 min, physical filters',['Single shot: stay in C1, ND 64/128, matrix metering, up to 60 s. If that gives the look and ~12 stops of DR, stop there','Very high DR with a flat horizon: 3-stop GND, up to 60 s','Layered (sky / rocks / water): switch to M','Sky exposure first (~30 s)','AEL + touch screen to spot-meter the rocks; expose','Filters off: spot-meter the water, set f/ and ISO so the shutter reads 1/10, 1/60 or 1/640 (see ND table)','Fit the filters from the table, run a 15 s silent test; histogram should reach ~⅓','Switch to Live Time (mechanical shutter, NR on), same ISO and shutter, take the full 2 min frame']],
+  ['Tripod LE, fast water 1/5–1/8 s',['Six-stop ND on, tripod mounted','You should get a direct meter reading at 1/5 s']],
+  ['Focus stacking / light-point metering',['Auto: press the Rec (focus bracket) button; set the count with the rear dial first time','Manual: touch 3–4 points front to back, AF-ON each, expose','Light points: metering to spot, touch where the light falls, focus with AF-ON, expose']],
+  ['Handheld landscape',['BKT, HHHR, LND, NLV all off','ISO 200, f/5.6, shutter for ETTR with blinkies balanced','AF via AF-ON','Extra DR: Live ND 32 or GND. Extra DR + resolution: handheld Hi-Res']],
+  ['Dark scene',['Press |O| for Night LV; turn the monitor down','Compose, test shot if under 60 s, correct','If ISO climbs too high for ≤60 s, go to Bulb/Live Time and use the ND table to size the exposure','At night use exposure bracketing — indicated DR in the dark is much worse']],
+  ['Handheld LE with Live ND (waterfalls, 1/8 s)',['IS on','CP → Live ND, rear dial picks the ND level','Shutter 1/8; adjust aperture, ISO and ND for correct exposure','Repeat at 1/4 and 1/13, choose the water you like']],
+  ['Handheld LE with a VND',['Fit the VND; drive to silent sequential','Aim for 1/8 at f/4, ISO 200, ETTR','Fire 1–2 s bursts and choose the best frame later']],
+ ],
+ bif:[
+  ['Setup check',['Fn lever position 1: rear dial is exposure compensation','Auto ISO, ceiling 12800','Drive SH2 25 fps; ProCap SH2 armed via the drive menu when waiting on a take-off','Subject detection: Bird. AF-ON = subject AF, half-press = normal C-AF','AF limiter set to the lens you have on (On1 40-150+TC, On2 300, On3 300+TC)','Card: slot 1 (fast). Offload and format after the day']],
+  ['In the field',['Pre-set aperture in lever position 2, flick back to 1','Shutter 1/1000+ on the front dial, exposure compensation on the rear as the bird crosses bright sky','AF-ON to acquire the bird, hold through the pass','Watch the highlight/shadow blinkies — the only info overlay in this mode']],
+ ],
+ street:[
+  ['Setup check',['Fn lever position 1: rear dial is exposure compensation','Auto ISO to 6400','Drive silent sequential 10 fps so shutter speeds below 1/160 still work','People detection on; Rec button toggles it','Home AF target Small, centre','Display: H&S blinkies only; grid and level off']],
+  ['In the field',['Short bursts, pick the frame later','Faces backlit: Fn for a spot reading','Pre-set aperture in position 2, then back to position 1']],
+ ],
+ macro:[
+  ['Setup check',['Fn lever position 2, ISO 200','MF clutch operative; peaking yellow, high','AF illuminator on, image review Auto','Focus BKT: 50 shots, differential 3, 0 s charge — stack in Helicon','Fn = Magnify']],
+  ['Stacking a subject',['Rough focus with AF-ON, then pull the clutch to MF','Focus on the nearest point you want sharp','Press Rec to start the bracket; stop it when the far point is covered','Stack in Helicon']],
+ ],
+ astro:[
+  ['Setup check',['Fn lever position 2, ISO 200 start point','Starry Sky AF, accuracy priority, AF-ON start/stop','Night LV on |O|; peaking on AF-ON; magnify on Fn','Drive 2 s timer; grid thirds']],
+  ['Shooting',['Compose with Night LV','Starry Sky AF via AF-ON, confirm with magnify','Test frame, adjust ISO, then shoot']],
+ ],
+};
+
+// ---- state
+let genre='landscape', tab='all', q='', onlyDiff=true;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+try{const g=localStorage.getItem('om3genre');if(g&&GENRES.some(x=>x.k===g))genre=g;}catch(e){}
+
+// dial
+const dial=$('#dial');
+GENRES.forEach(g=>{const b=document.createElement('button');b.innerHTML=`<span class="c">${g.c}</span>${g.n}`;b.onclick=()=>{genre=g.k;try{localStorage.setItem('om3genre',genre)}catch(e){};render();};dial.appendChild(b);});
+
+// tabs
+const tabsEl=$('#tabs');
+tabsEl.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();showSection(a.dataset.s);});
+function showSection(s){document.querySelectorAll('section').forEach(x=>x.classList.toggle('on',x.id===s));tabsEl.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.dataset.s===s));window.scrollTo({top:0});location.hash=s;}
+
+// chips
+const TABS=['all','Photo 1','Photo 2','AF','Gear','Wrench'];
+const chips=$('#tabchips');
+TABS.forEach(t=>{const b=document.createElement('button');b.textContent=t==='all'?'All menus':t;b.onclick=()=>{tab=t;renderRows();};chips.appendChild(b);});
+$('#q').addEventListener('input',e=>{q=e.target.value.trim().toLowerCase();renderRows();});
+$('#onlyDiff').addEventListener('change',e=>{onlyDiff=e.target.checked;renderRows();});
+
+let render=function(){
+ const g=GENRES.find(x=>x.k===genre);
+ dial.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('on',GENRES[i].k===genre));
+ ['#bGenre','#dGenre'].forEach(s=>$(s).textContent=g.n);
+ $('#genreIntro').innerHTML=`<h3 style="margin-top:0">${g.c} · ${g.n}</h3><p>${esc(g.intro)}</p><dl class="kv"><dt>Mode</dt><dd>Manual</dd><dt>ISO</dt><dd>${g.iso}</dd><dt>Fn lever</dt><dd>${g.lever}</dd></dl><ul style="margin:8px 0 0;padding-left:18px;font-size:14.5px">${g.key.map(k=>`<li>${esc(k)}</li>`).join('')}</ul>`;
+ // buttons
+ const lab=(b)=>b.all||b[genre];
+ const why=(b)=>typeof b.why==='string'?b.why:b.why[genre];
+ document.querySelector('#b_fn .lab').textContent=lab(BUTTONS.fn);
+ document.querySelector('#b_rec .lab').textContent=lab(BUTTONS.rec);
+ document.querySelector('#b_afon .lab').textContent=lab(BUTTONS.afon);
+ document.querySelector('#b_lv .lab').textContent=lab(BUTTONS.lv);
+ $('#b_left').textContent=lab(BUTTONS.left);$('#b_right').textContent=lab(BUTTONS.right);$('#b_down').textContent=lab(BUTTONS.down);$('#b_ok').textContent='OK = '+lab(BUTTONS.ok);
+ $('#btnlist').innerHTML=Object.values(BUTTONS).map(b=>`<li><b>${esc(b.n)}</b><div>${esc(lab(b))}<span class="why">${esc(why(b))}</span></div></li>`).join('');
+ $('#leverCard').innerHTML=`<b>Dials in ${g.n}:</b> Fn lever ${g.lever}. Front dial = shutter speed. Rear dial = ${g.lever==='Position 1'?'exposure compensation (aperture is pre-set in position 2)':'aperture'}. ${g.iso}.`;
+ // workflows
+ $('#wf').innerHTML=WORKFLOWS[genre].map(([t,steps],i)=>`<details ${i===0?'open':''}><summary>${esc(t)}</summary><div class="body"><ol>${steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div></details>`).join('');
+ renderRows();
+}
+
+function renderRows(){
+ chips.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('on',TABS[i]===tab));
+ const g=GENRES.find(x=>x.k===genre);
+ let rows=DATA.filter(r=>tab==='all'||r.tab===tab);
+ if(q)rows=rows.filter(r=>[r.section,r.func,r.sub,r.default,r.general,r[genre],r.comment].join(' ').toLowerCase().includes(q));
+ if(onlyDiff)rows=rows.filter(r=>{const v=r[genre]||r.general;return v&&v!==r.default;});
+ $('#count').textContent=`${rows.length} settings`;
+ let html='',sec='';
+ rows.forEach(r=>{
+  const key=r.tab+' › '+r.section;
+  if(key!==sec){sec=key;html+=`<div class="sec">${esc(key)}</div>`;}
+  const v=r[genre]||'';const gen=r.general||'';
+  const eff=v||gen;
+  html+=`<div class="row"><div class="name">${esc(r.func)}${r.sub&&r.sub!==r.func?` <span>› ${esc(r.sub)}</span>`:''}</div>
+  <div class="vals">${r.default?`<div>Default<b>${esc(r.default)}</b></div>`:''}${gen&&gen!==r.default?`<div>General A/S/M<b>${esc(gen)}</b></div>`:''}<div class="${eff&&eff!==r.default?'g':''}">${esc(g.c)} ${esc(g.n)}<b>${esc(eff||'as default')}</b></div></div>
+  ${r.comment?`<div class="note">${esc(r.comment)}</div>`:''}</div>`;
+ });
+ $('#rows').innerHTML=html||'<p class="muted">Nothing matches. Try a broader word, or untick the “only differs” box.</p>';
+}
+
+// ---- ND calculator
+const SHUT=[['1/8000',1/8000],['1/4000',1/4000],['1/2000',1/2000],['1/1000',1/1000],['1/640',1/640],['1/500',1/500],['1/400',1/400],['1/320',1/320],['1/250',1/250],['1/200',1/200],['1/160',1/160],['1/125',1/125],['1/100',1/100],['1/80',1/80],['1/60',1/60],['1/50',1/50],['1/40',1/40],['1/30',1/30],['1/25',1/25],['1/20',1/20],['1/15',1/15],['1/13',1/13],['1/10',1/10],['1/8',1/8],['1/6',1/6],['1/5',1/5],['1/4',1/4],['1/3',1/3],['1/2',1/2],['1/1.3',1/1.3],['1s',1],['1.6s',1.6],['2s',2],['3s',3],['4s',4],['6s',6],['8s',8]];
+const TARG=[['1/8 s',1/8],['1/4 s',1/4],['1 s',1],['2 s',2],['5 s',5],['10 s',10],['15 s',15],['30 s',30],['60 s',60],['2 min',120],['3 min',180],['4 min',240],['6 min',360]];
+const FILTERS=[3,6,10,15];
+const base=$('#base'),target=$('#target');
+SHUT.forEach(([l,v])=>base.add(new Option(l,v)));TARG.forEach(([l,v])=>target.add(new Option(l,v)));
+base.value=1/640;target.value=120;
+function combos(st){ // find filter combos summing within +-0.5 stop
+ const out=[];const fs=FILTERS;
+ for(let m=1;m<(1<<fs.length);m++){let s=0,n=[];fs.forEach((f,i)=>{if(m>>i&1){s+=f;n.push('ND'+f);}});if(Math.abs(s-st)<=0.6)out.push(n.join(' + ')+(s!==Math.round(st*2)/2&&Math.abs(s-st)>0.2?` (${s} stops)`:''));}
+ return out;
+}
+function nd(){
+ const b=+base.value,t=+target.value;const stops=Math.log2(t/b);
+ if(stops<=0){$('#ndres').innerHTML='<p>No filter needed — the metered shutter is already as long as the target.</p>';return;}
+ const half=Math.round(stops*2)/2;
+ const nd=Math.pow(2,stops);
+ const ndLabel=nd>=1000?Math.round(nd/1000)+'k':Math.round(nd);
+ const c=combos(stops);
+ $('#ndres').innerHTML=`<div class="big">${half}<small>stops · ND ${ndLabel}</small></div>
+ <p style="margin:8px 0 4px">Filters: ${c.length?c.map(x=>`<span class="pill">${x}</span>`).join(''):'<span class="muted">no clean combination of 3/6/10/15 — change ISO or aperture to shift the base shutter</span>'}</p>
+ <p class="muted" style="font-size:13.5px">Or shoot without physical filters: ${stops<=7?`Live ND ${Math.pow(2,Math.min(6,Math.floor(stops)))} covers ${Math.min(6,Math.floor(stops))} stops${stops>6?' (short by '+(half-6)+')':''}.`:'Live ND tops out at ND64 (6 stops), so you need glass here.'}</p>
+ <p class="muted" style="font-size:13.5px">15 s test on silent shutter: expect the histogram about ${Math.round(100*15/t)}% of the way across when the full exposure is ${target.options[target.selectedIndex].text}.</p>`;
+}
+base.onchange=target.onchange=nd;nd();
+
+
+// 12 wheel positions, clockwise from yellow (position 0). Index = OM-3 colour number.
+const WHEEL=['Yellow','Orange','Red','Pink','Magenta','Purple','Blue-purple','Blue','Aqua','Cyan-green','Green','Lime'];
+const HUES=[58,32,2,338,305,275,245,215,190,165,125,88];
+const RECIPES=[
+ {n:'OMTC Warm',a:'Ali O\'Keefe',src:'https://omtc.substack.com/p/5-jpeg-recipes-for-the-om-system',base:'COLOR 1',type:'color',mood:'Golden, punchy, rich skin. A little Kodak warmth.',best:'Cool early morning or midday sun, beach, dappled light.',avoid:'Indoor tungsten or golden hour — goes too warm.',
+  c:[2,2,3,0,0,0,4,2,5,3,0,-1],curve:[-1,2,-2],shade:0,sharp:-1,con:2,wb:'Auto · A4 M1 · Keep Warm Colour off'},
+ {n:'OMTC Cool',a:'Ali O\'Keefe',src:'https://omtc.substack.com/p/5-jpeg-recipes-for-the-om-system',base:'COLOR 1',type:'color',mood:'Clean, neutral, contrasty but calm. Provia / 400H.',best:'Sunset, travel, mixed light.',avoid:'Flat overcast light — can look lifeless.',
+  c:[2,2,3,0,0,0,4,2,5,3,0,-1],curve:[-1,2,-2],shade:0,sharp:-1,con:2,wb:'Auto · A2 M1 · Keep Warm Colour off'},
+ {n:'OMTC Soft',a:'Ali O\'Keefe',src:'https://omtc.substack.com/p/5-jpeg-recipes-for-the-om-system',base:'COLOR 1',type:'color',mood:'Meyerowitz / Cape Light. Soft, pastel, luminous highlights.',best:'Overcast, open shade, late afternoon, blue hour. Overexpose slightly.',avoid:'Harsh sun — washes out.',
+  c:[-1,0,-1,-2,0,-1,-2,-1,1,-2,1,-3],curve:[2,0,-6],shade:0,sharp:-2,con:2,wb:'Auto · A2 M0 · Keep Warm Colour off'},
+ {n:'OMTC Chrome',a:'Ali O\'Keefe',src:'https://omtc.substack.com/p/5-jpeg-recipes-for-the-om-system',base:'COLOR 4',type:'color',mood:'Slide film. High punch, crisp edges, moody shadows.',best:'City, golden hour, strong shapes. Underexpose slightly, watch the histogram.',avoid:'Overcast or extreme contrast without careful metering.',
+  c:[0,1,2,5,-1,-1,5,4,0,5,2,-2],curve:[2,0,-3],shade:0,sharp:-1,con:2,wb:'5600K · A1 M2 · Keep Warm Colour off'},
+ {n:'OMTC Mono',a:'Ali O\'Keefe',src:'https://omtc.substack.com/p/5-jpeg-recipes-for-the-om-system',base:'MONO 2',type:'mono',mood:'Tri-X pushed to 800. Bold, punchy, rich texture.',best:'Textures, architecture, dramatic light. Versatile.',avoid:'—',
+  filter:'Blue +2',curve:[0,-2,-3],shade:0,sharp:1,con:0,grain:'Low',tone:'Neutral'},
+ {n:'Eternal Sunshine',a:'Jerred Z',src:'https://www.megapixelroad.com/p/eternal-sun-om-3-jpeg-recipe',base:'COLOR 2',type:'color',mood:'Everything saturated with soft light; lower, film-like contrast.',best:'City, some garden shots. The A7 M5 shift is most of the look.',avoid:'Scenes where a neutral white matters.',
+  c:[-1,4,2,5,4,2,5,3,2,1,4,4],curve:[2,6,-1],shade:0,sharp:-2,con:-2,wb:'Sunny · A7 M5'},
+ {n:'High Noon',a:'Jerred Z',src:'https://www.megapixelroad.com/p/4-monochrome-jpeg-recipes-for-the',base:'MONO 1',type:'mono',mood:'Dark shadows, bright highlights. Harsh light, industrial, stark.',best:'Low-latitude-film look. Shadows are deep — don\'t count on recovering them.',avoid:'Flat light.',
+  filter:'None',curve:[-2,-7,3],shade:0,sharp:-2,con:-1,grain:'Medium',tone:'Neutral',wb:'5300K · A5 M4'},
+ {n:'Black Glass',a:'Jerred Z',src:'https://www.megapixelroad.com/p/4-monochrome-jpeg-recipes-for-the',base:'MONO 2',type:'mono',mood:'Glossy, blue-filtered darkness.',best:'Night, glass, water. Pull Blue below +3 if skies block up.',avoid:'—',
+  filter:'Blue +3',curve:[-2,null,null],shade:0,sharp:null,con:null,grain:'Low',tone:'Neutral',wb:'5300K · A5 M4',partial:true},
+ {n:'Silver and Dust',a:'Jerred Z',src:'https://www.megapixelroad.com/p/4-monochrome-jpeg-recipes-for-the',base:'MONO 3',type:'mono',mood:'Red-filtered, gritty, heavy grain.',best:'Skies, skin, dusty streets.',avoid:'—',
+  filter:'Red +3',curve:[1,null,null],shade:0,sharp:null,con:null,grain:'High',tone:'Neutral',wb:'5300K · A5 M4',partial:true},
+ {n:'Static',a:'Jerred Z',src:'https://www.megapixelroad.com/p/4-monochrome-jpeg-recipes-for-the',base:'MONO 4',type:'mono',mood:'Crushed shadows, lifted mids and highs. Electric.',best:'Graphic scenes, neon, strong geometry.',avoid:'—',
+  filter:'Cyan +2',curve:[-5,5,6],shade:0,sharp:1,con:1,grain:'Medium',tone:'Neutral',wb:'5300K · A5 M4'},
+ {n:'Kodachrome 25',a:'GarethB (mu-43)',src:'https://www.mu-43.com/threads/my-kodachrome-classic-chrome-pen-f-settings-update.92950/',base:'COLOR 1',type:'color',mood:'The original Pen-F cult recipe. Desaturated greens, warm reds, deep shadows.',best:'Sunlit street, mid-century documentary feel.',avoid:'Forests — greens go grey.',
+  c:[-2,1,1,-1,-1,2,-3,-2,-4,-4,-4,-5],curve:[-5,2,-2],shade:0,sharp:0,con:2,wb:'Auto · A-2 G+2'},
+ {n:'Kodachrome 64',a:'GarethB (mu-43)',src:'https://www.mu-43.com/threads/my-kodachrome-classic-chrome-pen-f-settings-update.92950/',base:'COLOR 1',type:'color',mood:'Rougher K64 sketch: cooler greens, crushed shadows.',best:'As K25, with a touch of amber in WB if it looks cold.',avoid:'—',
+  c:[-3,0,0,1,-2,-1,-2,-1,-3,-2,-4,-4],curve:[-6,2,-2],shade:0,sharp:0,con:0,wb:'Auto'},
+ {n:'Kodachrome 25 (v2)',a:'BushmanOrig (mu-43)',src:'https://www.mu-43.com/threads/my-kodachrome-classic-chrome-pen-f-settings-update.92950/page-5',base:'COLOR 1',type:'color',mood:'A later, lighter Kodachrome take built from DxO colour cards.',best:'Author uses +2/6 EV with it.',avoid:'—',
+  c:[-3,0,-2,-1,1,-2,3,1,0,-1,-1,-3],curve:[-1,1,1],shade:0,sharp:0,con:0,wb:'Auto · A+1 G-2'},
+ {n:'Kodachrome 25',a:'VideoPic',src:'http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html',base:'COLOR 1',type:'color',mood:'Colour signature only — tone it yourself per scene.',best:'VideoPic leaves curves at 0 and tunes tonality per image.',avoid:'—',
+  c:[-2,-1,-2,-1,0,-2,2,1,0,-1,0,-1],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'Auto · A+1 G-2'},
+ {n:'Kodachrome 64',a:'VideoPic',src:'http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html',base:'COLOR 1',type:'color',mood:'Richer purples and blues than K25.',best:'Sunlit colour with a classic slide feel.',avoid:'—',
+  c:[-2,0,0,2,1,4,1,1,-1,1,2,-1],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'Auto · A-1 G+1'},
+ {n:'Portra 160 NC',a:'VideoPic',src:'http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html',base:'COLOR 1',type:'color',mood:'Neutral-colour Portra. Gentle, portrait-friendly.',best:'People, soft daylight.',avoid:'—',
+  c:[-2,0,-1,1,1,-1,-1,-2,-1,-1,1,-1],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'Auto · A-1 G0'},
+ {n:'Portra 160 VC',a:'VideoPic',src:'http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html',base:'COLOR 1',type:'color',mood:'Vivid-colour Portra. Warm oranges, restrained blues.',best:'City and portraits with warmth.',avoid:'—',
+  c:[0,3,1,0,-2,0,-5,1,-2,-2,0,-1],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'Auto · A+1 G0'},
+ {n:'Velvia 100',a:'VideoPic',src:'http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html',base:'COLOR 1',type:'color',mood:'Generic Velvia: reds, aqua and greens pushed, pinks held.',best:'Landscape in good light.',avoid:'Skin.',
+  c:[-1,0,2,1,1,0,1,-1,2,1,1,1],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'Auto'},
+ {n:'Olympus E-1 1020 RGB',a:'VideoPic',src:'http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html',base:'COLOR 1',type:'color',mood:'The old Kodak-CCD Olympus E-series look, RGB-weighted.',best:'Nostalgia for the E-1 / E-500.',avoid:'—',
+  c:[1,0,2,0,1,0,2,0,1,0,2,0],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'Auto'},
+ {n:'Olympus E-1 2010 CYM',a:'VideoPic',src:'http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html',base:'COLOR 1',type:'color',mood:'E-series look, CYM-weighted.',best:'As above, slightly different balance.',avoid:'—',
+  c:[2,0,1,0,2,0,1,0,2,0,1,0],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'Auto'},
+ {n:'Everyday Chrome',a:'VideoPic',src:'http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html',base:'COLOR 1',type:'color',mood:'Chrome effect on reds, greens and blue skies. His daily look.',best:'Everything — tune tonality per shot.',avoid:'—',
+  c:[1,2,0,-1,-1,0,1,1,1,0,-1,0],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'Auto'},
+ {n:'City Look',a:'Giuseppe Ardica',src:'http://myolympusomd.blogspot.com/p/olympus-pen-f-color-profiles.html',base:'COLOR 1',type:'color',mood:'Yellows up, reds and aqua pulled hard. Concrete and brick.',best:'Urban, overcast.',avoid:'—',
+  c:[3,1,-4,0,-1,-1,-1,-1,-5,-1,1,-1],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'Auto'},
+ {n:'Film Chrome Rich',a:'Dave Herring',src:'https://www.youtube.com/watch?v=sdNulmXBC8E',base:'COLOR 3',type:'color',mood:'COLOR 3 tamed: greens and yellows down a touch, warm fixed WB.',best:'Travel, golden hour.',avoid:'—',
+  c:[2,3,5,4,4,4,3,3,3,2,1,1],curve:[0,0,0],shade:0,sharp:0,con:0,wb:'5200K · A+1 G-1'},
+ {n:'Classic Chrome spirit',a:'decades (mu-43)',src:'https://www.mu-43.com/threads/pen-f-classic-chrome.92362/page-2',base:'COLOR 1',type:'color',mood:'Not a clone — low saturation, deep blacks, reportage.',best:'Overcast street and documentary.',avoid:'—',
+  c:[-3,1,1,-3,-3,-3,-3,-3,-3,-3,-3,-3],curve:[-5,0,0],shade:0,sharp:0,con:0,wb:'Auto'},
+ {n:'Muted lifted',a:'MPLS Runner (mu-43)',src:'https://www.mu-43.com/threads/my-kodachrome-classic-chrome-pen-f-settings-update.92950/page-9',base:'COLOR 1',type:'color',mood:'Desaturated across the board, shadows lifted hard, green shift in WB.',best:'Shoot at +1/3 EV.',avoid:'—',
+  c:[-2,-1,-1,-1,-1,-1,-2,-2,-2,-3,-2,-2],curve:[5,2,0],shade:0,sharp:-1,con:1,wb:'Auto · A-1 G+3'},
+ {n:'Mono-Crunch',a:'Jack Wang',src:'https://jackwang.com.au/blog/om3-zf-bnw',base:'MONO 1',type:'mono',mood:'S-curve for night city: holds neon, keeps blacks.',best:'Night street, neon.',avoid:'Flat midday.',
+  filter:'Red +3',curve:[-4,0,4],shade:0,sharp:-1,con:-1,grain:'Low',tone:'Neutral'},
+ {n:'HP5-ish (Mono 4 tweak)',a:'Rob Trek',src:'https://www.mu-43.com/threads/om-3-color-profile-4-and-mono-4.126021/',base:'MONO 4',type:'mono',mood:'Highlights down, shadows up, grain high — Ilford HP5 feel.',best:'General B&W.',avoid:'—',
+  filter:'None',curve:[3,0,-3],shade:0,sharp:0,con:0,grain:'High',tone:'Neutral'},
+];
+const BASES={
+ 'COLOR 1':'Natural, all ±0',
+ 'COLOR 2':'Depth and richness',
+ 'COLOR 3':'Film-like, high saturation',
+ 'COLOR 4':'Light, soft tone (new on OM-3)',
+ 'MONO 1':'Plain mono, no grain',
+ 'MONO 2':'High contrast (H +6 / S −6), high grain',
+ 'MONO 3':'Red filter +3, low grain',
+ 'MONO 4':'Low grain, soft (new on OM-3)',
+};
+
+// ---- synthetic recipe preview
+const PW=240,PH=160;
+let baseScene=null;
+function drawScene(){
+ const c=document.createElement('canvas');c.width=PW;c.height=PH;const x=c.getContext('2d');
+ // sky
+ const sky=x.createLinearGradient(0,0,0,PH*0.5);sky.addColorStop(0,'#5a8fd8');sky.addColorStop(1,'#bcd4ee');x.fillStyle=sky;x.fillRect(0,0,PW,PH*0.5);
+ // sun glow
+ const g=x.createRadialGradient(PW*0.78,PH*0.14,2,PW*0.78,PH*0.14,38);g.addColorStop(0,'rgba(255,245,210,1)');g.addColorStop(1,'rgba(255,245,210,0)');x.fillStyle=g;x.fillRect(0,0,PW,PH*0.5);
+ // sea
+ const sea=x.createLinearGradient(0,PH*0.5,0,PH*0.68);sea.addColorStop(0,'#2f8fa6');sea.addColorStop(1,'#1d6a7e');x.fillStyle=sea;x.fillRect(0,PH*0.5,PW,PH*0.18);
+ // foliage hill
+ x.fillStyle='#4f8a3a';x.beginPath();x.moveTo(0,PH*0.62);x.quadraticCurveTo(PW*0.25,PH*0.42,PW*0.55,PH*0.6);x.lineTo(PW*0.55,PH);x.lineTo(0,PH);x.fill();
+ x.fillStyle='#2f5e26';x.beginPath();x.moveTo(0,PH*0.75);x.quadraticCurveTo(PW*0.2,PH*0.6,PW*0.4,PH*0.78);x.lineTo(PW*0.4,PH);x.lineTo(0,PH);x.fill();
+ // sand / path
+ x.fillStyle='#d9c293';x.fillRect(PW*0.4,PH*0.68,PW*0.6,PH*0.32);
+ // red wall
+ x.fillStyle='#b8352a';x.fillRect(PW*0.62,PH*0.56,PW*0.38,PH*0.2);
+ x.fillStyle='#e1a53a';x.fillRect(PW*0.62,PH*0.56,PW*0.1,PH*0.2);
+ // skin face
+ x.fillStyle='#d9a37e';x.beginPath();x.arc(PW*0.52,PH*0.74,14,0,7);x.fill();
+ x.fillStyle='#b9825f';x.beginPath();x.arc(PW*0.52,PH*0.74,14,0.3,2.3);x.fill();
+ x.fillStyle='#3a2a22';x.beginPath();x.arc(PW*0.52,PH*0.66,15,3.3,6.1);x.fill();
+ // shirt magenta
+ x.fillStyle='#b0498d';x.fillRect(PW*0.46,PH*0.86,28,PH*0.14);
+ // grey card + chips
+ const chips=['#ffffff','#bdbdbd','#777777','#2a2a2a','#f3d64a','#f08a2e','#d13a3a','#d84f94','#9b4fc9','#4d63d1','#3aaac5','#7bc36a'];
+ chips.forEach((cc,i)=>{x.fillStyle=cc;x.fillRect(4+i*18,PH-18,16,14)});
+ baseScene=x.getImageData(0,0,PW,PH);
+}
+function rgb2hsl(r,g,b){r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,b);let h=0,s=0,l=(M+m)/2;if(M!==m){const d=M-m;s=l>0.5?d/(2-M-m):d/(M+m);switch(M){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4}h*=60}return[h,s,l]}
+function hsl2rgb(h,s,l){const C=(1-Math.abs(2*l-1))*s,X=C*(1-Math.abs((h/60)%2-1)),m=l-C/2;let r,g,b;if(h<60){r=C;g=X;b=0}else if(h<120){r=X;g=C;b=0}else if(h<180){r=0;g=C;b=X}else if(h<240){r=0;g=X;b=C}else if(h<300){r=X;g=0;b=C}else{r=C;g=0;b=X}return[(r+m)*255,(g+m)*255,(b+m)*255]}
+const SEG=new Uint8Array(360);for(let h=0;h<360;h++){let best=0,bd=999;HUES.forEach((H,i)=>{let d=Math.abs(h-H);d=Math.min(d,360-d);if(d<bd){bd=d;best=i}});SEG[h]=best}
+function curveLUT(cv,con){
+ const [s,m,h]=cv.map(v=>v||0);const lut=new Float32Array(256);
+ for(let i=0;i<256;i++){let v=i/255;
+  // contrast around mid
+  v=0.5+(v-0.5)*(1+con*0.09);
+  // three-point curve: weights peak at 0.2,0.5,0.85
+  const ws=Math.max(0,1-Math.abs(v-0.18)/0.3),wm=Math.max(0,1-Math.abs(v-0.5)/0.35),wh=Math.max(0,1-Math.abs(v-0.85)/0.3);
+  v+= (s*ws+m*wm+h*wh)*0.022;
+  lut[i]=Math.min(1,Math.max(0,v))}
+ return lut;
+}
+function parseWB(wb){ if(!wb)return[0,0];const a=/A\s*([+-]?\d+)/i.exec(wb),m=/M\s*([+-]?\d+)/i.exec(wb),g=/G\s*([+-]?\d+)/i.exec(wb);let A=a?+a[1]:0,M=m?+m[1]:0;if(g)M-= +g[1];if(/5[0-9]00K|Sunny/i.test(wb))A+=1;return[A,M]}
+function renderPreview(r){
+ if(!baseScene)drawScene();
+ const c=document.createElement('canvas');c.width=PW;c.height=PH;const x=c.getContext('2d');
+ const img=x.createImageData(PW,PH);const d=img.data,b=baseScene.data;
+ const lut=curveLUT(r.curve,r.con||0);const [A,M]=parseWB(r.wb);
+ const grain=r.type==='mono'?({Low:6,Medium:11,High:18}[r.grain]||0):0;
+ const filt=r.type==='mono'?(r.filter||''):'';
+ let fw=[0.3,0.59,0.11];const fm=/(\w+)\s*\+(\d)/.exec(filt);
+ if(fm){const k=+fm[2]*0.12;const n=fm[1].toLowerCase();if(n==='red')fw=[0.3+k*2,0.59-k,0.11-k];else if(n==='blue')fw=[0.3-k,0.59-k,0.11+k*2];else if(n==='cyan')fw=[0.3-k*1.5,0.59+k,0.11+k];else if(n==='yellow'||n==='orange')fw=[0.3+k,0.59+k*0.5,0.11-k*1.5];else if(n==='green')fw=[0.3-k,0.59+k*2,0.11-k];const S=fw[0]+fw[1]+fw[2];fw=fw.map(v=>v/S)}
+ for(let i=0;i<d.length;i+=4){
+  let R=b[i],G=b[i+1],B=b[i+2];
+  // WB shift
+  R+=A*3.2+M*2.2;G-=M*2.6;B-=A*3.6-M*1.4;
+  R=Math.min(255,Math.max(0,R));G=Math.min(255,Math.max(0,G));B=Math.min(255,Math.max(0,B));
+  if(r.type==='mono'){
+   let L=(R*fw[0]+G*fw[1]+B*fw[2]);L=lut[Math.round(Math.min(255,Math.max(0,L)))]*255;
+   if(grain)L+= (Math.random()-0.5)*grain*2;
+   L=Math.min(255,Math.max(0,L));d[i]=d[i+1]=d[i+2]=L;d[i+3]=255;continue;
+  }
+  let [h,s,l]=rgb2hsl(R,G,B);
+  if(s>0.04){const v=r.c[SEG[Math.round(h)%360]];s=Math.min(1,Math.max(0,s*(1+v*0.14)));}
+  l=lut[Math.round(l*255)];
+  const o=hsl2rgb(h,s,l);d[i]=o[0];d[i+1]=o[1];d[i+2]=o[2];d[i+3]=255;
+ }
+ x.putImageData(img,0,0);return c.toDataURL('image/jpeg',0.82);
+}
+const PREV={};
+function previewFor(r){const k=r.n+'|'+r.a;if(!PREV[k])PREV[k]=renderPreview(r);return PREV[k]}
+function baseURL(){if(!baseScene)drawScene();const c=document.createElement('canvas');c.width=PW;c.height=PH;c.getContext('2d').putImageData(baseScene,0,0);return c.toDataURL('image/jpeg',0.82)}
+// compare widget
+function renderCompare(){
+ const el=$('#compare');if(!el)return;
+ const opts=RECIPES.map((r,i)=>`<option value="${i}">${esc(r.n)} — ${esc(r.a)}</option>`).join('');
+ el.innerHTML=`<div class="cmp"><div><img alt="Base scene, no recipe" src="${baseURL()}"><div class="lab">Camera default (test scene)</div></div><div><img id="cmpImg" alt="Recipe preview"><select id="cmpSel">${opts}</select></div></div>`;
+ const sel=$('#cmpSel');sel.onchange=()=>{$('#cmpImg').src=previewFor(RECIPES[+sel.value])};sel.value=0;sel.onchange();
+}
+
+// ---- genre icons (inline SVG, 24 viewBox)
+const ICONS={
+ landscape:'<path d="M3 18l5-8 4 6 3-4 6 6H3z"/><circle cx="17" cy="7" r="2"/>',
+ bif:'<path d="M3 13c4-1 6-5 9-5 3 0 4 3 9 2-2 3-5 4-9 4-3 0-5 2-9-1z"/><path d="M12 8l2-3"/>',
+ street:'<rect x="4" y="7" width="7" height="13"/><rect x="13" y="4" width="7" height="16"/><path d="M7 11h1M7 14h1M16 8h1M16 11h1M16 14h1"/>',
+ macro:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/>',
+ astro:'<path d="M12 3l1.8 4.5L18 9l-4.2 1.5L12 15l-1.8-4.5L6 9l4.2-1.5z"/><path d="M5 18l.7 1.5L7 20l-1.3.5L5 22l-.7-1.5L3 20l1.3-.5z"/>',
+};
+dial.querySelectorAll('button').forEach((b,i)=>{b.innerHTML=`<svg class="ic" viewBox="0 0 24 24">${ICONS[GENRES[i].k]}</svg><span class="c">${GENRES[i].c}</span>${GENRES[i].n}`;});
+
+// ---- dial map
+let lever=null;
+const DIALS={1:{front:'Shutter',rear:'Exp. comp',note:'Lever 1 — front dial shutter speed, rear dial exposure compensation. BIF and Street live here with Auto ISO, so a bird crossing bright sky is one twist from rescued.'},
+             2:{front:'Shutter',rear:'Aperture',note:'Lever 2 — front dial shutter speed, rear dial aperture. Landscape, Macro and Astro default here; BIF and Street flick here to pre-set aperture.'}};
+const MODEPOS={landscape:[70,46],bif:[94,54],street:[104,80],macro:[94,106],astro:[70,114]};
+function renderDials(){
+ const g=GENRES.find(x=>x.k===genre);
+ const l=lever||(g.lever==='Position 1'?1:2);
+ document.querySelectorAll('#leverSeg button').forEach(b=>b.classList.toggle('on',+b.dataset.l===l));
+ $('#leverKnob').setAttribute('x',l===1?118:144);
+ $('#frontLab').textContent=DIALS[l].front;$('#rearLab').textContent=DIALS[l].rear;
+ const p=MODEPOS[genre];$('#modeDot').setAttribute('cx',p[0]);$('#modeDot').setAttribute('cy',p[1]);
+ $('#leverCard').innerHTML=`<b>${g.c} ${g.n} defaults to ${g.lever}.</b> ${DIALS[l].note} ISO: ${g.iso} — ISO itself is on the ▶ button, drive on ▼.`;
+}
+document.querySelectorAll('#leverSeg button').forEach(b=>b.onclick=()=>{lever=+b.dataset.l;renderDials();});
+const _render=render;render=function(){lever=null;_render();renderDials();};
+
+// ---- recipes
+const SW=(h,v)=>`hsl(${h} ${v===0?10:Math.min(95,55+Math.abs(v)*8)}% ${v<0?62:50}%)`;
+function wheelSVG(r,size){
+ if(r.type==='mono'){
+  return `<svg class="wheel" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="var(--panel2)"/><circle cx="50" cy="50" r="30" fill="url(#g${r.n.replace(/\W/g,'')})"/><defs><linearGradient id="g${r.n.replace(/\W/g,'')}" x1="0" x2="1"><stop offset="0" stop-color="#111"/><stop offset="1" stop-color="#f2f2f2"/></linearGradient></defs><text x="50" y="54" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)">${esc(r.filter||'')}</text></svg>`;
+ }
+ let s=`<svg class="wheel" viewBox="0 0 100 100"><circle cx="50" cy="50" r="20" fill="none" stroke="var(--line)" stroke-dasharray="2 2"/>`;
+ r.c.forEach((v,i)=>{
+  const a=(i*30-90)*Math.PI/180,a2=((i+1)*30-90)*Math.PI/180,mid=(i*30-75)*Math.PI/180;
+  const R=20+ (v+5)*4.4; // -5 → 20, +5 → 64 ... scale: 0 => 42
+  const x1=50+R*Math.cos(a),y1=50+R*Math.sin(a),x2=50+R*Math.cos(a2),y2=50+R*Math.sin(a2);
+  s+=`<path d="M50 50 L${x1.toFixed(1)} ${y1.toFixed(1)} A${R} ${R} 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}Z" fill="${SW(HUES[i],v)}" stroke="var(--panel)" stroke-width="1.2"/>`;
+ });
+ s+=`<circle cx="50" cy="50" r="42" fill="none" stroke="var(--ink)" stroke-opacity=".35" stroke-width=".8"/><circle cx="50" cy="50" r="13" fill="var(--panel)"/></svg>`;
+ return s;
+}
+function curveSVG(c){
+ const [s,m,h]=c; if(s==null&&m==null) return '';
+ const pts=[[0,100],[33,66-(s||0)*4],[66,33-(m||0)*4],[100,-(h||0)*4]];
+ const d=pts.map((p,i)=>(i?'L':'M')+p[0]+' '+(p[1]+10)).join(' ');
+ return `<svg class="curve" viewBox="-2 -12 104 124"><line x1="0" y1="110" x2="100" y2="10" stroke="var(--line)" stroke-dasharray="3 3"/><path d="${d}" fill="none" stroke="var(--dial)" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
+}
+let rtype='all',rauth='all';
+const AUTH=['all',...new Set(RECIPES.map(r=>r.a))];
+const rchips=$('#rchips'),achips=$('#achips');
+[['all','All'],['color','Colour'],['mono','Mono']].forEach(([k,l])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>{rtype=k;renderRecipes();};b.dataset.k=k;rchips.appendChild(b);});
+AUTH.forEach(a=>{const b=document.createElement('button');b.textContent=a==='all'?'All authors':a;b.onclick=()=>{rauth=a;renderRecipes();};b.dataset.k=a;achips.appendChild(b);});
+function renderRecipes(){
+ rchips.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===rtype));
+ achips.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===rauth));
+ const list=RECIPES.filter(r=>(rtype==='all'||r.type===rtype)&&(rauth==='all'||r.a===rauth));
+ $('#rcount').textContent=`${list.length} recipes · tap one for the full numbers`;
+ $('#rgrid').innerHTML=list.map((r,i)=>{
+  const cg=r.type==='color'?`<div class="cgrid">${r.c.map((v,j)=>`<div><i style="background:${SW(HUES[j],v||1)}"></i>${WHEEL[j]}<b>${v>0?'+':''}${v}</b></div>`).join('')}</div>`:`<p><b>Colour filter:</b> ${esc(r.filter)} · <b>Grain:</b> ${esc(r.grain)} · <b>Tone:</b> ${esc(r.tone)}</p>`;
+  const cv=r.curve.map(v=>v==null?'—':(v>0?'+':'')+v);
+  return `<div class="recipe" data-i="${RECIPES.indexOf(r)}"><div class="top">${wheelSVG(r)}<div><h3>${esc(r.n)}</h3><div class="by">${esc(r.a)}</div><div class="mood">${esc(r.mood)}</div><div class="tags"><span class="tag base">${esc(r.base)}</span>${r.wb?`<span class="tag">WB ${esc(r.wb)}</span>`:''}${r.partial?'<span class="tag" style="color:var(--amber)">partial</span>':''}</div></div></div>
+  <div class="rdetail">
+   <img class="thumb" alt="Preview of ${esc(r.n)} on the test scene" src="${previewFor(r)}">
+   ${cg}
+   <div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin-top:6px">
+    <div><b>Curve</b> — Shadow ${cv[0]} · Midtone ${cv[1]} · Highlight ${cv[2]}<br><b>Shading</b> ${r.shade??'—'} · <b>Sharpness</b> ${r.sharp==null?'—':(r.sharp>0?'+':'')+r.sharp} · <b>Contrast</b> ${r.con==null?'—':(r.con>0?'+':'')+r.con}</div>
+    ${curveSVG(r.curve)}
+   </div>
+   <p style="margin-top:8px"><b>Best for:</b> ${esc(r.best)}${r.avoid&&r.avoid!=='—'?`<br><b>Avoid:</b> ${esc(r.avoid)}`:''}</p>
+   ${r.partial?'<p class="partial">The source only lists part of this curve — fill the rest by eye or check the original post.</p>':''}
+   <p><a href="${r.src}" target="_blank" rel="noopener">Source</a></p>
+  </div></div>`;
+ }).join('');
+}
+$('#rgrid').addEventListener('click',e=>{const c=e.target.closest('.recipe');if(c&&!e.target.closest('a'))c.classList.toggle('open');});
+$('#bases').innerHTML=`<dl class="kv">${Object.entries(BASES).map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl><p class="muted" style="font-size:13px;margin:8px 0 0">COLOR 1–3 and MONO 1–3 match the Pen-F; COLOR 4 and MONO 4 are new to the OM-3. Every recipe here overrides the base's colour values anyway — the base mostly matters for mono grain and the hidden curve.</p>`;
+renderRecipes();
+// ---- theme toggle
+const root=document.documentElement;
+try{const t=localStorage.getItem('om3theme');if(t)root.dataset.theme=t;}catch(e){}
+$('#theme').onclick=()=>{const cur=root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');const nx=cur==='dark'?'light':'dark';root.dataset.theme=nx;try{localStorage.setItem('om3theme',nx)}catch(e){}};
+
+// ---- overview map follows genre
+const _r2=render;render=function(){_r2();const g=GENRES.find(x=>x.k===genre);$('#mapSlotName').textContent=`${g.c} · ${g.n}`;$('#wGenre').textContent=g.n;
+ document.querySelectorAll('#mapSlots text').forEach((t,i)=>{t.setAttribute('fill',GENRES[i].k===genre?'var(--amber)':'var(--ink)')});renderTree();};
+
+// ---- decision tree
+const TREE={
+ q:'What are you looking at?',
+ o:[
+  {l:'A landscape or seascape, I have a tripod',n:{q:'How is the light?',o:[
+    {l:'Even — sky and ground within reach',a:{t:'C1 Landscape, lever 2',d:'ISO 200, f/5.6, shutter until the histogram sits right. Touch to focus or AF-ON. 2 s timer. Done.'}},
+    {l:'High contrast — bright sky, dark foreground',n:{q:'Is anything moving (water, cloud, grass)?',o:[
+      {l:'Yes, and I want it crisp',a:{t:'C1 + GND on the CP button',d:'Works when the horizon is reasonably straight. 3 stops max; if the boundary is ragged, use HDR 3F 2EV instead and blend.'}},
+      {l:'Yes, and I want it smooth',a:{t:'Long exposure — see Procedures',d:'Recall C1 into M first. Test in silent (no NR), shoot in Live Time (NR on). Use the ND calculator.'}},
+      {l:'No, static scene',a:{t:'C1 + Live ND 64',d:'Gains about 2.5 stops of DR in one shot with no blend. More flexible in post than GND.'}}]}}]}},
+  {l:'A landscape, handheld',a:{t:'C1 Landscape, lever 2, AF-ON to focus',d:'For more DR: Live ND 32 or GND. For DR plus resolution: handheld Hi-Res (50 MP) via CP. Keep SIS on.'}},
+  {l:'Birds or fast wildlife',n:{q:'What is the bird doing?',o:[
+    {l:'Flying past',a:{t:'C2 BIF, lever 1',d:'SH2 25 fps, bird detection on, AF-ON for subject AF. Rear dial is exposure comp — ride it as the background changes. Set the AF limiter for the lens on the camera.'}},
+    {l:'Perched, about to take off',a:{t:'C2 + Pro Capture SH2',d:'Half-press to start buffering 15 frames, full press when it goes. 100 fps SH1 if you need it and the light allows.'}}]}},
+  {l:'People, street, travel',a:{t:'C3 Street, lever 1',d:'Silent sequential 10 fps so slow shutters still work. People detection on, Rec toggles it. Fn for a spot reading on a backlit face. Add a colour recipe from the Looks tab.'}},
+  {l:'Something small — insect, flower, detail',n:{q:'Do you need front-to-back sharpness?',o:[
+    {l:'Yes',a:{t:'C4 Macro + focus bracket',d:'AF-ON for rough focus, pull the clutch, focus on the nearest point, press Rec to run the bracket, stop when the far point is covered. Stack in Helicon.'}},
+    {l:'No, one plane is fine',a:{t:'C4 Macro, manual clutch',d:'Peaking yellow/high, magnify on Fn. 2 s timer if on a tripod.'}}]}},
+  {l:'Night sky',a:{t:'C5 Astro, lever 2',d:'Night LV on |O| to compose. Starry Sky AF via AF-ON, confirm with magnify on Fn. 2 s timer. Test, adjust ISO, shoot. Bracket — indicated DR lies in the dark.'}},
+  {l:'Moving water, no tripod',a:{t:'C1 + Live ND',d:'IS on, CP → Live ND, rear dial picks the level. Shutter 1/8 then try 1/4 and 1/13. Or a VND on the lens and silent sequential bursts.'}},
+ ]};
+let treePath=[];
+function renderTree(){
+ let node=TREE;treePath.forEach(i=>node=node.o[i].n||node.o[i]);
+ const el=$('#tree');
+ const crumb=treePath.length?`<div class="crumb">${treePath.map((i,d)=>{let n=TREE;for(let k=0;k<d;k++)n=n.o[treePath[k]].n;return esc(n.o[i].l)}).join(' › ')} · <a href="#" id="treeBack">back</a></div>`:'';
+ if(node.a){el.innerHTML=crumb+`<div class="ans"><b>${esc(node.a.t)}</b>${esc(node.a.d)}</div><button class="btn small" id="treeReset" style="margin-top:8px">Start over</button>`;}
+ else{el.innerHTML=crumb+`<div class="q">${esc(node.q)}</div><div class="opts">${node.o.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o.l)}</button>`).join('')}</div>`;}
+ el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{treePath.push(+b.dataset.i);renderTree();});
+ const bk=el.querySelector('#treeBack');if(bk)bk.onclick=e=>{e.preventDefault();treePath.pop();renderTree();};
+ const rs=el.querySelector('#treeReset');if(rs)rs.onclick=()=>{treePath=[];renderTree();};
+}
+
+// ---- slot planner
+let plan;
+try{plan=JSON.parse(localStorage.getItem('om3plan'))}catch(e){}
+if(!plan)plan=GENRES.map(g=>({genre:g.k,color:[],mono:[]}));
+function savePlan(){try{localStorage.setItem('om3plan',JSON.stringify(plan))}catch(e){}}
+function renderSlots(){
+ $('#slots').innerHTML=plan.map((s,i)=>{
+  const g=GENRES.find(x=>x.k===s.genre);
+  const mk=(list,type)=>list.map((n,j)=>{const r=RECIPES.find(x=>x.n===n&&x.type===type);return r?`<div class="mini">${wheelSVG(r)}<span>${esc(r.n)}</span><button class="x" data-s="${i}" data-t="${type}" data-j="${j}" aria-label="Remove">×</button></div>`:''}).join('')+(list.length<4?`<div class="mini add" data-s="${i}" data-t="${type}">+ add ${type==='color'?'colour':'mono'} (${list.length}/4)</div>`:'');
+  return `<div class="slot"><div class="head"><div class="cnum">C${i+1}</div><select data-s="${i}">${GENRES.map(x=>`<option value="${x.k}" ${x.k===s.genre?'selected':''}>${x.n}</option>`).join('')}<option value="looks" ${s.genre==='looks'?'selected':''}>Looks only (A mode)</option></select></div>
+  <div class="slotgrid"><div><h4>Colour</h4>${mk(s.color,'color')}</div><div><h4>Mono</h4>${mk(s.mono,'mono')}</div></div></div>`;
+ }).join('');
+ $('#slots').querySelectorAll('select').forEach(sel=>sel.onchange=()=>{plan[+sel.dataset.s].genre=sel.value;savePlan();});
+ $('#slots').querySelectorAll('.x').forEach(b=>b.onclick=()=>{plan[+b.dataset.s][b.dataset.t].splice(+b.dataset.j,1);savePlan();renderSlots();});
+ $('#slots').querySelectorAll('.add').forEach(b=>b.onclick=()=>openPicker(+b.dataset.s,b.dataset.t));
+}
+function openPicker(si,type){
+ $('#pickTitle').textContent=`C${si+1} · add a ${type==='color'?'colour':'mono'} look`;
+ $('#pickList').innerHTML=RECIPES.filter(r=>r.type===type&&!plan[si][type].includes(r.n)).map(r=>`<div class="row" data-n="${esc(r.n)}">${wheelSVG(r)}<div><b>${esc(r.n)}</b><div class="by">${esc(r.a)} · ${esc(r.base)}</div></div></div>`).join('');
+ $('#pickList').querySelectorAll('.row').forEach(x=>x.onclick=()=>{plan[si][type].push(x.dataset.n);savePlan();$('#picker').classList.remove('on');renderSlots();});
+ $('#picker').classList.add('on');
+}
+$('#pickClose').onclick=()=>$('#picker').classList.remove('on');
+$('#picker').addEventListener('click',e=>{if(e.target.id==='picker')$('#picker').classList.remove('on')});
+$('#planReset').onclick=()=>{plan=GENRES.map(g=>({genre:g.k,color:[],mono:[]}));savePlan();renderSlots();$('#planOut').innerHTML='';};
+$('#planBtn').onclick=()=>{
+ let out='OM-3 loading sequence\n=====================\n';
+ plan.forEach((s,i)=>{
+  const g=GENRES.find(x=>x.k===s.genre);
+  out+=`\nC${i+1}  ${g?g.n:'Looks only'}\n`;
+  out+=g?`  1. Load ${g.n} .set (or dial it in from Settings tab) · lever ${g.lever.replace('Position ','')} · ${g.iso}\n`:'  1. Mode A, your usual exposure defaults\n';
+  let step=2;
+  const doList=(list,type)=>list.forEach((n,j)=>{const r=RECIPES.find(x=>x.n===n&&x.type===type);if(!r)return;
+   out+=`  ${step++}. Creative dial ${type==='color'?'COLOR':'MONO'} → slot ${j+1} ← "${r.n}" (${r.a})\n`;
+   if(r.type==='color')out+=`     wheel 0–11: ${r.c.map(v=>(v>0?'+':'')+v).join(' ')}\n`;else out+=`     filter ${r.filter} · grain ${r.grain} · tone ${r.tone}\n`;
+   out+=`     curve S${f(r.curve[0])} M${f(r.curve[1])} H${f(r.curve[2])} · shading ${r.shade??'—'} · sharp ${f(r.sharp)} · contrast ${f(r.con)}\n`;
+   if(r.wb)out+=`     WB ${r.wb}  (set on SCP — only survives inside the C-slot)\n`;});
+  doList(s.color,'color');doList(s.mono,'mono');
+  out+=`  ${step}. Menu › Camera 1 › Reset/Custom Modes › Save to C${i+1} · name it\n`;
+ });
+ out+='\nAfter all five: set each slot\'s Save Settings to Reset.';
+ $('#planOut').innerHTML=`<pre class="plan">${esc(out)}</pre><button class="btn" id="copyPlan">Copy</button>`;
+ $('#copyPlan').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(out).then(()=>{$('#copyPlan').textContent='Copied'});};
+};
+const f=v=>v==null?'—':(v>0?'+':'')+v;
+
+// ---- learn
+const WEEK=[
+ ['Load C1 only','Install the Landscape .set (or dial it from the Settings tab). Leave C2–C5 alone. One personality at a time.'],
+ ['Learn three buttons','AF-ON focuses. Fn is spot/AEL. CP opens the computational menu. Everything else can wait.'],
+ ['Lever 2, ISO 200, f/5.6','Twist the front dial until the histogram sits to the right without blinkies. That is 80% of landscape exposure.'],
+ ['Shoot RAW + JPEG','RAW keeps your options; the JPEG shows you the look. Pick one colour recipe from Looks and live with it for a week.'],
+ ['One long exposure','Follow the Shoot tab procedure start to finish. Use the ND calculator. Expect to waste three frames.'],
+ ['Then C2 or C3','Add the genre you actually shoot next. Flip the lever to 1 and feel the rear dial become exposure compensation.'],
+ ['Set Save to Reset','Once a slot feels right, lock it. Accidental changes are discarded when you leave the mode.'],
+];
+$('#week').innerHTML=WEEK.map(([t,d],i)=>`<div class="step"><div class="n">${i+1}</div><div><b>${esc(t)}</b><span>${esc(d)}</span></div></div>`).join('');
+const GLOSS=[
+ ['AEL','Auto-exposure lock. On this setup the Fn button both locks exposure and switches to spot metering while held.'],
+ ['AF-ON / BBF','Back-button focus. Focus with your thumb, not the shutter, so the camera never refocuses after you have set it.'],
+ ['AF limiter','Tells autofocus to ignore distances outside a range — stops it hunting to infinity when a bird drops behind a branch.'],
+ ['Blinkies','Highlight/shadow warnings: flashing areas that are clipped white or black.'],
+ ['Bulb / Live Time','Exposures longer than 60 s. Live Time shows the image building up every 15 s so you can stop when it is right.'],
+ ['C-AF / S-AF / MF','Continuous (tracks movement), single (locks once), manual.'],
+ ['CP button','Computational Photography: Hi-Res, Live ND, HDR, focus stack, Live GND in one menu, front dial to cycle.'],
+ ['DR','Dynamic range — how much brighter the brightest and darker the darkest parts can be before they clip.'],
+ ['ESP','OM System\'s matrix/evaluative metering — reads the whole frame.'],
+ ['ETTR','Expose to the right: push the histogram as far right as it goes without clipping, for the cleanest file.'],
+ ['Focus bracket / stack','Camera shoots a series stepping focus; stacking merges them for front-to-back sharpness.'],
+ ['GND','Graduated ND: darkens one half of the frame (usually sky). Live GND is the computational version on CP.'],
+ ['HDR 3F 2EV','Three RAW frames two stops apart, blended in post.'],
+ ['HHHR','Handheld Hi-Res: 50 MP composite from a burst, no tripod.'],
+ ['Keep Warm Colour','Auto WB option that leaves tungsten light warm. Most recipes turn it off.'],
+ ['Live ND','Computational neutral density up to ND64 (6 stops) by stacking frames — no glass needed.'],
+ ['MF clutch','Pull the focus ring back on Pro lenses to drop into manual focus with a distance scale.'],
+ ['ND stops','Each stop halves the light. ND8 = 3 stops, ND64 = 6, ND1000 = 10.'],
+ ['Night LV','Brightens the live view in the dark, at the cost of a laggy, grainy preview.'],
+ ['NR','Long-exposure noise reduction: a second dark frame as long as the first. Doubles every test shot — hence the silent-shutter trick.'],
+ ['Peaking','Outlines the sharpest edges in colour while manual focusing.'],
+ ['Pro Capture','Buffers frames while half-pressed, keeps the ones before you fully pressed. SH1 up to 120 fps, SH2 up to 50.'],
+ ['SCP','Super Control Panel: the one-screen summary of every live setting. OK button opens it.'],
+ ['SH1 / SH2','Silent high-speed bursts. SH1 fixes focus and exposure on frame one; SH2 keeps tracking.'],
+ ['SIS','Sensor image stabilisation. Left on even on a tripod here — it helps in wind.'],
+ ['Spot (Sh)','Spot metering biased −3 EV so a dark thing you meter stays dark.'],
+ ['WB shift A / G / M','Amber warms, green and magenta tint. OM-3 shows A and M; old Pen-F recipes use A and G — G+2 ≈ M−2.'],
+];
+function renderGloss(q=''){q=q.toLowerCase();$('#gl').innerHTML=GLOSS.filter(([t,d])=>!q||(t+d).toLowerCase().includes(q)).map(([t,d])=>`<div><b>${esc(t)}</b>${esc(d)}</div>`).join('')||'<p class="muted">No match.</p>';}
+$('#gq').addEventListener('input',e=>renderGloss(e.target.value));
+
+// ---- boot
+renderGloss();renderSlots();render();renderCompare();
+const h2=location.hash.replace('#','');showSection(['overview','buttons','workflow','sims','planner','settings','nd','learn'].includes(h2)?h2:'overview');
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+
+</script>
+</body></html>
