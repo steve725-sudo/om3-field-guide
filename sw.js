@@ -1,6 +1,6 @@
-const C='om3-v11';const FILES=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const C='om3-v12';const FILES=['./','./index.html','./data.js','./app.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
-self.addEventListener('fetch',e=>{const u=new URL(e.request.url);const isPage=e.request.mode==='navigate'||u.pathname.endsWith('index.html')||u.pathname.endsWith('/');
- if(isPage){e.respondWith(fetch(e.request).then(r=>{const cl=r.clone();caches.open(C).then(c=>c.put('./index.html',cl));return r}).catch(()=>caches.match('./index.html')));return;}
+self.addEventListener('fetch',e=>{const u=new URL(e.request.url);const isPage=e.request.mode==='navigate'||u.pathname.endsWith('index.html')||u.pathname.endsWith('/')||u.pathname.endsWith('data.js')||u.pathname.endsWith('app.js');
+ if(isPage){e.respondWith(fetch(e.request).then(r=>{const cl=r.clone();caches.open(C).then(c=>c.put(e.request,cl));return r}).catch(()=>caches.match('./index.html')));return;}
  e.respondWith(caches.match(e.request,{ignoreSearch:true}).then(r=>r||fetch(e.request).then(res=>{if(u.hostname.includes('fonts.g')){const cl=res.clone();caches.open(C).then(c=>c.put(e.request,cl))}return res}).catch(()=>caches.match('./index.html'))))});
