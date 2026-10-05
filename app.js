@@ -150,7 +150,7 @@ let render=function(){
  // buttons
  const lab=(b)=>b.all||b[genre];
  const why=(b)=>typeof b.why==='string'?b.why:b.why[genre];
- $('#t_fn').textContent=lab(BUTTONS.fn);$('#t_rec').textContent=lab(BUTTONS.rec);$('#t_afon').textContent=lab(BUTTONS.afon);$('#t_lv').textContent=lab(BUTTONS.lv);$('#t_left').textContent='◀ '+lab(BUTTONS.left);$('#t_down').textContent='▼ '+lab(BUTTONS.down)+' · ▶ '+lab(BUTTONS.right)+' · OK '+lab(BUTTONS.ok);
+
  $('#btnlist').innerHTML=Object.values(BUTTONS).map(b=>`<li><b>${esc(b.n)}</b><div>${esc(lab(b))}<span class="why">${esc(why(b))}</span></div></li>`).join('');
  $('#leverCard').innerHTML=`<b>Dials in ${g.n}:</b> Fn lever ${g.lever}. Front dial = shutter speed. Rear dial = ${g.lever==='Position 1'?'exposure compensation (aperture is pre-set in position 2)':'aperture'}. ${g.iso}.`;
  // workflows
